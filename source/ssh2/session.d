@@ -62,7 +62,7 @@ public:
     {
         import std.string : toStringz;
         const rc = libssh2_session_banner_set(this.raw, banner.toStringz);
-        if (rc != 0)
+        if (rc < 0)
             throw new SessionError(this.raw, rc);
     }
 
@@ -114,7 +114,7 @@ public:
             this.raw,
             cast(int) LIBSSH2_FLAG_COMPRESS,
             cast(int) flag);
-        if (rc != 0)
+        if (rc < 0)
             throw new SessionError(this.raw, rc);
     }
 
