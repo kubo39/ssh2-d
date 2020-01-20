@@ -1,0 +1,17 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/ssh2-d
+ssh2-d.so
+ssh2-d.dylib
+ssh2-d.dll
+ssh2-d.a
+ssh2-d.lib
+ssh2-d-test-*
+*.exe
+*.o
+*.obj
+*.lst
+/dub.selections.json
+/tests/sshd

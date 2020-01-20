@@ -1,0 +1,7 @@
+name "ssh2-d"
+description "D bindings for libssh2."
+authors "Hiroki Noda"
+copyright "Copyright © 2020, Hiroki Noda"
+license "BSL-1.0"
+dependency "openssl" version="~>2.0.1"
+libs "ssh2"
