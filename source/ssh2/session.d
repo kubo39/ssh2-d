@@ -20,6 +20,20 @@ enum HostKeyType
     ED25519 = LIBSSH2_HOSTKEY_TYPE_ED25519,
 }
 
+enum MethodType
+{
+    KEX = LIBSSH2_METHOD_KEX,
+    HOSTKEY = LIBSSH2_METHOD_HOSTKEY,
+    CRYPT_CS = LIBSSH2_METHOD_CRYPT_CS,
+    CRYPT_SC = LIBSSH2_METHOD_CRYPT_SC,
+    MAC_CS = LIBSSH2_METHOD_MAC_CS,
+    MAC_SC = LIBSSH2_METHOD_MAC_SC,
+    COMP_CS = LIBSSH2_METHOD_COMP_CS,
+    COMP_SC = LIBSSH2_METHOD_COMP_SC,
+    LANG_CS = LIBSSH2_METHOD_LANG_CS,
+    LANG_SC = LIBSSH2_METHOD_LANG_SC,
+}
+
 alias HostKey = Tuple!(const(ubyte)[], "data", HostKeyType, "type");
 
 
@@ -142,5 +156,26 @@ public:
         hostKey.data = data;
         hostKey.type = type;
         return hostKey;
+    }
+
+    /// Set preferred key exchange method.
+    void methodPref(MethodType method_type, string prefs)
+    {
+        import std.string : toStringz;
+        const rc = libssh2_session_method_pref(
+            this.raw,
+            cast(int) method_type,
+            prefs.toStringz
+            );
+        if (rc < 0)
+            throw new SessionError(this.raw, rc);
+    }
+
+    // Returns the currently active algorithm.
+    string methods(MethodType method_type)
+    {
+        import std.string : fromStringz;
+        const ptr = libssh2_session_methods(this.raw, cast(int) method_type);
+        return cast(immutable) ptr.fromStringz;
     }
 }

@@ -17,6 +17,17 @@ enum LIBSSH2_HOSTKEY_TYPE_ECDSA_384 = 4;
 enum LIBSSH2_HOSTKEY_TYPE_ECDSA_521 = 5;
 enum LIBSSH2_HOSTKEY_TYPE_ED25519 = 6;
 
+enum LIBSSH2_METHOD_KEX = 0;
+enum LIBSSH2_METHOD_HOSTKEY = 1;
+enum LIBSSH2_METHOD_CRYPT_CS = 2;
+enum LIBSSH2_METHOD_CRYPT_SC = 3;
+enum LIBSSH2_METHOD_MAC_CS = 4;
+enum LIBSSH2_METHOD_MAC_SC = 5;
+enum LIBSSH2_METHOD_COMP_CS = 6;
+enum LIBSSH2_METHOD_COMP_SC = 7;
+enum LIBSSH2_METHOD_LANG_CS = 8;
+enum LIBSSH2_METHOD_LANG_SC = 9;
+
 enum LIBSSH2_ERROR_BANNER_RECV = -2;
 enum LIBSSH2_ERROR_BANNER_SEND = -3;
 enum LIBSSH2_ERROR_INVALID_MAC = -4;
@@ -106,7 +117,7 @@ int libssh2_session_method_pref(
     LIBSSH2_SESSION* sess,
     int method_type,
     const(char)* prefs);
-const(ubyte)* libssh2_session_methods(LIBSSH2_SESSION* sess, int method_type);
+const(char)* libssh2_session_methods(LIBSSH2_SESSION* sess, int method_type);
 void libssh2_session_set_blocking(LIBSSH2_SESSION* session, int blocking);
 void libssh2_session_set_timeout(LIBSSH2_SESSION* session, c_long timeout);
 int libssh2_session_supported_algs(

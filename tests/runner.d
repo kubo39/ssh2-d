@@ -10,6 +10,8 @@ void smokeSession()
     assert(sess.timeout == 0.msecs);
     sess.compress(true);
     assert(sess.hostKey() == HostKey.init);
+    sess.methodPref(MethodType.KEX, "diffie-hellman-group14-sha1");
+    assert(sess.methods(MethodType.KEX) is null);
     sess.blocking(true);
     sess.timeout(0.msecs);
 }
