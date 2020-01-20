@@ -171,7 +171,7 @@ public:
             throw new SessionError(this.raw, rc);
     }
 
-    // Returns the currently active algorithm.
+    /// Returns the currently active algorithm.
     string methods(MethodType method_type)
     {
         import std.string : fromStringz;
