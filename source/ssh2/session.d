@@ -178,4 +178,22 @@ public:
         const ptr = libssh2_session_methods(this.raw, cast(int) method_type);
         return cast(immutable) ptr.fromStringz;
     }
+
+    /// Get list of supported algorithm.
+    string[] supprtedAlgs(MethodType method_type)
+    {
+        import std.string : fromStringz;
+        string[] ret;
+        const(char)* algs;
+        const rc = libssh2_session_supported_algs(this.raw, cast(int) method_type, &algs);
+        if (rc <= 0)
+            throw new SessionError(this.raw, rc);
+        foreach (i; 0 .. rc)
+        {
+            const(char)* ptr = (algs + i);
+            ret = ret ~ cast(immutable) ptr.fromStringz;
+        }
+        libssh2_free(this.raw, cast(void*) algs);
+        return ret;
+    }
 }

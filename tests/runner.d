@@ -14,6 +14,8 @@ void smokeSession()
     assert(sess.methods(MethodType.KEX) is null);
     sess.blocking(true);
     sess.timeout(0.msecs);
+    assert(sess.supprtedAlgs(MethodType.KEX).length > 0);
+    assert(sess.supprtedAlgs(MethodType.HOSTKEY).length > 0);
 }
 
 void main()

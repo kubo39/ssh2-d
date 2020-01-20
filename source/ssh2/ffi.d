@@ -123,7 +123,7 @@ void libssh2_session_set_timeout(LIBSSH2_SESSION* session, c_long timeout);
 int libssh2_session_supported_algs(
     LIBSSH2_SESSION* session,
     int method_type,
-    const(ubyte)** algs);
+    const(char)** algs);
 int libssh2_session_last_error(
     LIBSSH2_SESSION* sess,
     char** msg,
