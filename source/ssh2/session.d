@@ -82,7 +82,7 @@ public:
     string banner() @nogc nothrow
     {
         import std.string : fromStringz;
-        auto ret = libssh2_session_banner_get(this.raw);
+        const ret = libssh2_session_banner_get(this.raw);
         return cast(immutable) ret.fromStringz;
     }
 
@@ -104,7 +104,7 @@ public:
     /// functions.
     void timeout(Duration timeout) @nogc nothrow
     {
-        const timeout_ms = cast(c_long) timeout.total!"msecs";
+        auto timeout_ms = cast(c_long) timeout.total!"msecs";
         libssh2_session_set_timeout(this.raw, timeout_ms);
     }
 
@@ -114,7 +114,7 @@ public:
     /// A timeout of 0 means no timeout.
     Duration timeout() @nogc nothrow
     {
-        const timeout_ms = libssh2_session_get_timeout(this.raw);
+        auto timeout_ms = libssh2_session_get_timeout(this.raw);
         return dur!"msecs"(timeout_ms);
     }
 
@@ -122,7 +122,7 @@ public:
     /// Compression.
     void compress(bool flag)
     {
-        const rc = libssh2_session_flag(
+        auto rc = libssh2_session_flag(
             this.raw,
             cast(int) LIBSSH2_FLAG_COMPRESS,
             cast(int) flag);
@@ -161,7 +161,7 @@ public:
     void methodPref(MethodType method_type, string prefs)
     {
         import std.string : toStringz;
-        const rc = libssh2_session_method_pref(
+        auto rc = libssh2_session_method_pref(
             this.raw,
             cast(int) method_type,
             prefs.toStringz
@@ -184,7 +184,7 @@ public:
         import std.string : fromStringz;
         string[] ret;
         const(char)* algs;
-        const rc = libssh2_session_supported_algs(this.raw, cast(int) method_type, &algs);
+        auto rc = libssh2_session_supported_algs(this.raw, cast(int) method_type, &algs);
         if (rc <= 0)
             throw new SessionError(this.raw, rc);
         foreach (i; 0 .. rc)
@@ -207,7 +207,7 @@ public:
     {
         if (this.sock is null)
             throw new SessionErrnoException(LIBSSH2_ERROR_BAD_SOCKET);
-        const rc = libssh2_session_handshake(this.raw, this.sock.handle);
+        auto rc = libssh2_session_handshake(this.raw, this.sock.handle);
         if (rc < 0)
             throw new SessionError(this.raw, rc);
     }
@@ -216,7 +216,7 @@ public:
     string authMethods(string username) nothrow
     {
         import std.string : fromStringz, toStringz;
-        auto ret = libssh2_userauth_list(
+        const ret = libssh2_userauth_list(
             this.raw,
             username.toStringz,
             cast(uint) username.length
