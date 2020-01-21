@@ -58,6 +58,25 @@ void smokeSessionHandshake()
     assert(sess.hostKeyHash(HashType.MD5) !is null);
 }
 
+void keyboardInteractive()
+{
+    import std.format : format;
+    import std.process : environment;
+    import std.socket : TcpSocket;
+    import std.string : indexOf;
+
+    auto user = environment["USER"];
+    auto socket = new TcpSocket(testAddress());
+    auto sess = new Session;
+    sess.setSock(socket);
+    sess.handshake();
+    sess.hostKey();
+    auto methods = sess.authMethods(user);
+    assert(methods.indexOf("keyboard-interactive"),
+           format!"test server (%s) must support `ChallengeResponseAuthentication yes`, not just %s"(testAddress(), methods));
+    assert(!sess.authenticated());
+}
+
 void smokeAgent()
 {
     import std.exception : assertThrown;
