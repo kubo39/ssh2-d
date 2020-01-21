@@ -47,4 +47,80 @@ public:
         if (rc < 0)
             throw new SessionError(this.session.raw, rc);
     }
+
+    /// Get a range over the identities of this agent.
+    Identities identities()
+    {
+        return new Identities(this);
+    }
+
+    class Identities
+    {
+    private:
+        libssh2_agent_publickey* prev;
+
+        void getIdentity(libssh2_agent_publickey* prev)
+        {
+            libssh2_agent_publickey* next;
+            const rc = libssh2_agent_get_identity(this.agent.raw, &next, prev);
+            if (rc == 0)
+            {
+                this.prev = next;
+                this.publicKey = new PublicKey(this.prev);
+            }
+            else if (rc == 1)
+            {
+                this.prev = null;
+                this.publicKey = null;
+            }
+            else
+                throw new SessionError(this.agent.session.raw, rc);
+        }
+
+    public:
+        Agent agent;
+        PublicKey* publicKey;
+
+        this(Agent agent)
+        {
+            this.agent = agent;
+            getIdentity(null);
+        }
+
+        bool empty()
+        {
+            return this.prev is null;
+        }
+
+        void popFront()
+        {
+            getIdentity(this.prev);
+        }
+
+        PublicKey* front()
+        {
+            return this.publicKey;
+        }
+
+    }
+}
+
+struct PublicKey
+{
+private:
+    libssh2_agent_publickey* raw;
+
+public:
+    /// Returns the data of this public key.
+    const(ubyte)[] blob() @nogc nothrow
+    {
+        return this.raw.blob[0 ..this.raw.blob_len];
+    }
+
+    /// Returns the comment.
+    string comment() @nogc nothrow
+    {
+        import std.string : fromStringz;
+        return cast(immutable) this.raw.comment.fromStringz;
+    }
 }

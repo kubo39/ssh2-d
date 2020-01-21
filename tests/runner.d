@@ -45,6 +45,14 @@ void smokeSessionHandshake()
     auto methods = sess.authMethods(user);
     assert(methods.indexOf("publickey") >= 0, methods);
     assert(!sess.authenticated());
+
+    auto agent = sess.agent();
+    agent.connect();
+    agent.listIdentities();
+    {
+        const identity = agent.identities().front();
+        assert(identity !is null);
+    }
 }
 
 void smokeAgent()
@@ -52,6 +60,12 @@ void smokeAgent()
     auto sess = new Session;
     auto agent = sess.agent();
     agent.connect();
+    agent.listIdentities();
+    {
+        auto a = agent.identities();
+        const i1 = a.front();
+        assert(i1 !is null);
+    }
     agent.disconnect();
 }
 
