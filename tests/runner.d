@@ -165,6 +165,23 @@ void smokeChannel()
     assert(channel.eof());
 }
 
+void badSmokeChannel()
+{
+    auto sess = authedSession();
+    auto channel = sess.channelSession();
+    channel.flush();
+    channel.exec("false");
+    consumeStdio(channel);
+
+    channel.waitEOF();
+    assert(channel.eof());
+
+    channel.close();
+    channel.waitClosed();
+    assert(channel.exitStatus() == 1);
+    assert(channel.eof());
+}
+
 /**
  *  Entrypoint.
  */
@@ -180,4 +197,5 @@ void main()
 
     // Channel.
     smokeChannel();
+    badSmokeChannel();
 }
