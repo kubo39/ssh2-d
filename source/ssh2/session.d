@@ -73,7 +73,7 @@ public:
     void banner(string banner)
     {
         import std.string : toStringz;
-        const rc = libssh2_session_banner_set(this.raw, banner.toStringz);
+        auto rc = libssh2_session_banner_set(this.raw, banner.toStringz);
         if (rc < 0)
             throw new SessionError(this.raw, rc);
     }
