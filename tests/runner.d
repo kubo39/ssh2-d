@@ -59,14 +59,17 @@ void smokeSessionHandshake()
 
 void smokeAgent()
 {
+    import std.exception : assertThrown;
+
     auto sess = new Session;
     auto agent = sess.agent();
     agent.connect();
     agent.listIdentities();
     {
         auto a = agent.identities();
-        const i1 = a.front();
+        auto i1 = a.front();
         assert(i1 !is null);
+        assertThrown(agent.userauth("foo", i1));
     }
     agent.disconnect();
 }
