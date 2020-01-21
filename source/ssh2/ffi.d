@@ -78,6 +78,16 @@ enum LIBSSH2_ERROR_KNOWN_HOSTS = -46;
 enum LIBSSH2_INIT_NO_CRYPTO = 0x1;
 
 struct LIBSSH2_SESSION;
+struct LIBSSH2_AGENT;
+
+struct libssh2_agent_publickey
+{
+    uint magic;
+    void* node;
+    ubyte* blob;
+    size_t blob_len;
+    char* comment;
+}
 
 alias LIBSSH2_ALLOC_FUNC = void* function(size_t, void**);
 alias LIBSSH2_FREE_FUNC = void function(void*, void**);
@@ -138,6 +148,19 @@ int libssh2_keepalive_send(LIBSSH2_SESSION* sess, int* seconds_to_next);
 int libssh2_session_block_direction(LIBSSH2_SESSION* sess);
 
 // agent
+LIBSSH2_AGENT* libssh2_agent_init(LIBSSH2_SESSION* sess);
+void libssh2_free(LIBSSH2_AGENT* agent);
+int libssh2_agent_connect(LIBSSH2_AGENT* agent);
+int libssh2_agent_disconnect(LIBSSH2_AGENT* agent);
+int libssh2_agent_list_identities(LIBSSH2_AGENT* agent);
+int libssh2_agent_get_identity(
+    LIBSSH2_AGENT* agent,
+    libssh2_agent_publickey** store,
+    libssh2_agent_publickey* prev);
+int libssh2_agent_userauth(
+    LIBSSH2_AGENT* agent,
+    const(char)* username,
+    libssh2_agent_publickey* identity);
 
 // userauth
 int libssh2_userauth_authenticated(LIBSSH2_SESSION* sess);
