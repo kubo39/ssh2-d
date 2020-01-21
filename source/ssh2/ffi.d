@@ -75,6 +75,10 @@ enum LIBSSH2_ERROR_ENCRYPT = -44;
 enum LIBSSH2_ERROR_BAD_SOCKET = -45;
 enum LIBSSH2_ERROR_KNOWN_HOSTS = -46;
 
+enum LIBSSH2_HOSTKEY_HASH_MD5 = 1;
+enum LIBSSH2_HOSTKEY_HASH_SHA1 = 2;
+enum LIBSSH2_HOSTKEY_HASH_SHA256 = 3;
+
 enum LIBSSH2_INIT_NO_CRYPTO = 0x1;
 
 struct LIBSSH2_SESSION;
@@ -98,8 +102,8 @@ alias libssh2_socket_t = int;
 // misc
 int libssh2_init(int flag);
 int libssh2_exit();
-const(char)* libssh2_free(LIBSSH2_SESSION* sess, void* ptr);
-const(char)* libssh2_hostkey_hash(LIBSSH2_SESSION* session, int hash_type);
+const(ubyte)* libssh2_free(LIBSSH2_SESSION* sess, void* ptr);
+const(ubyte)* libssh2_hostkey_hash(LIBSSH2_SESSION* session, int hash_type);
 
 // session
 LIBSSH2_SESSION* libssh2_session_init_ex(

@@ -36,6 +36,13 @@ enum MethodType
     LANG_SC = LIBSSH2_METHOD_LANG_SC,
 }
 
+enum HashType
+{
+    MD5 = LIBSSH2_HOSTKEY_HASH_MD5,
+    SHA1 = LIBSSH2_HOSTKEY_HASH_SHA1,
+    SHA256 = LIBSSH2_HOSTKEY_HASH_SHA256,
+}
+
 alias HostKey = Tuple!(const(ubyte)[], "data", HostKeyType, "type");
 
 
@@ -245,5 +252,22 @@ public:
         if (ptr is null)
             throw new SessionErrnoException(LIBSSH2_ERROR_ALLOC);
         return new Agent(ptr, this);
+    }
+
+    /// Returns computed digest of the remote system's hostkey.
+    const(ubyte)[] hostKeyHash(HashType hash) @nogc nothrow
+    {
+        size_t len = () @safe @nogc nothrow {
+            final switch (hash)
+            {
+            case HashType.MD5: return 16;
+            case HashType.SHA1: return 20;
+            case HashType.SHA256: return 32;
+            }
+        } ();
+        const ret = libssh2_hostkey_hash(this.raw, hash);
+        if (ret is null)
+            return null;
+        return ret[0 .. len];
     }
 }

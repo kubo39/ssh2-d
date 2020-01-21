@@ -55,6 +55,7 @@ void smokeSessionHandshake()
         agent.userauth(user, identity);
     }
     assert(sess.authenticated());
+    assert(sess.hostKeyHash(HashType.MD5) !is null);
 }
 
 void smokeAgent()
