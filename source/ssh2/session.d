@@ -131,7 +131,7 @@ public:
     }
 
     /// Get the remote key.
-    HostKey hostKey() nothrow
+    HostKey hostKey() @nogc nothrow
     {
         size_t len;
         int kind;
@@ -139,31 +139,18 @@ public:
         if (ret is null)
             return HostKey.init;
         const data = ret[0 .. len];
-        HostKeyType type;
-        switch (kind)
-        {
-        case LIBSSH2_HOSTKEY_TYPE_RSA:
-            type = HostKeyType.RSA;
-            break;
-        case LIBSSH2_HOSTKEY_TYPE_DSS:
-            type = HostKeyType.DSS;
-            break;
-        case LIBSSH2_HOSTKEY_TYPE_ECDSA_256:
-            type = HostKeyType.ECDSA256;
-            break;
-        case LIBSSH2_HOSTKEY_TYPE_ECDSA_384:
-            type = HostKeyType.ECDSA384;
-            break;
-        case LIBSSH2_HOSTKEY_TYPE_ECDSA_521:
-            type = HostKeyType.ECDSA521;
-            break;
-        case LIBSSH2_HOSTKEY_TYPE_UNKNOWN:
-            type = HostKeyType.UNKNOWN;
-            break;
-        default:
-            type = HostKeyType.UNKNOWN;
-            break;
-        }
+        auto type = () @nogc nothrow pure @safe {
+            switch (kind)
+            {
+            case LIBSSH2_HOSTKEY_TYPE_RSA: return HostKeyType.RSA;
+            case LIBSSH2_HOSTKEY_TYPE_DSS: return HostKeyType.DSS;
+            case LIBSSH2_HOSTKEY_TYPE_ECDSA_256: return HostKeyType.ECDSA256;
+            case LIBSSH2_HOSTKEY_TYPE_ECDSA_384: return HostKeyType.ECDSA384;
+            case LIBSSH2_HOSTKEY_TYPE_ECDSA_521: return HostKeyType.ECDSA521;
+            case LIBSSH2_HOSTKEY_TYPE_UNKNOWN: return HostKeyType.UNKNOWN;
+            default: return HostKeyType.UNKNOWN;
+            }
+        } ();
         HostKey hostKey;
         hostKey.data = data;
         hostKey.type = type;
