@@ -1,6 +1,6 @@
 module ssh2.ffi;
 
-import core.stdc.config; /+ c_long +/
+import core.stdc.config : c_long;
 
 extern(C):
 @nogc:
