@@ -2,6 +2,10 @@ import ssh2.session;
 
 import std.socket : InternetAddress;
 
+/**
+ *  Utilities.
+ */
+
 InternetAddress testAddress() @safe
 {
     import std.conv : parse;
@@ -11,6 +15,33 @@ InternetAddress testAddress() @safe
     auto port = parse!ushort(s);
     return new InternetAddress("127.0.0.1", port);
 }
+
+Session authedSession()
+{
+    import std.process : environment;
+    import std.socket : TcpSocket;
+
+    auto user = environment["USER"];
+    auto socket = new TcpSocket(testAddress());
+    auto sess = new Session;
+    sess.setSock(socket);
+    sess.handshake();
+    assert(!sess.authenticated());
+
+    {
+        auto agent = sess.agent();
+        agent.connect();
+        agent.listIdentities();
+        auto identity = agent.identities().front;
+        agent.userauth(user, identity);
+    }
+    assert(sess.authenticated());
+    return sess;
+}
+
+/**
+ *  Session.
+ */
 
 void smokeSession()
 {
@@ -66,16 +97,21 @@ void keyboardInteractive()
     import std.string : indexOf;
 
     auto user = environment["USER"];
-    auto socket = new TcpSocket(testAddress());
+    auto address = testAddress();
+    auto socket = new TcpSocket(address);
     auto sess = new Session;
     sess.setSock(socket);
     sess.handshake();
     sess.hostKey();
     auto methods = sess.authMethods(user);
     assert(methods.indexOf("keyboard-interactive"),
-           format!"test server (%s) must support `ChallengeResponseAuthentication yes`, not just %s"(testAddress(), methods));
+           format!"test server (%s) must support `ChallengeResponseAuthentication yes`, not just %s"(address, methods));
     assert(!sess.authenticated());
 }
+
+/**
+ *  Agent.
+ */
 
 void smokeAgent()
 {
@@ -93,6 +129,10 @@ void smokeAgent()
     }
     agent.disconnect();
 }
+
+/**
+ *  Entrypoint.
+ */
 
 void main()
 {
