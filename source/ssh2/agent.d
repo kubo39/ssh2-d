@@ -101,13 +101,24 @@ public:
         {
             return this.publicKey;
         }
+    }
 
+    /// Attempt public key authentication.
+    void userauth(string username, PublicKey* identity)
+    {
+        import std.string : toStringz;
+        const rc = libssh2_agent_userauth(
+            this.raw,
+            username.toStringz,
+            identity.raw);
+        if (rc < 0)
+            throw new SessionError(this.session.raw, rc);
     }
 }
 
 struct PublicKey
 {
-private:
+package:
     libssh2_agent_publickey* raw;
 
 public:

@@ -50,9 +50,11 @@ void smokeSessionHandshake()
     agent.connect();
     agent.listIdentities();
     {
-        const identity = agent.identities().front();
+        auto identity = agent.identities().front();
         assert(identity !is null);
+        agent.userauth(user, identity);
     }
+    assert(sess.authenticated());
 }
 
 void smokeAgent()
