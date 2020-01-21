@@ -11,7 +11,7 @@ private:
     Session session;
 
 package:
-    this(LIBSSH2_AGENT* raw, Session session)
+    this(LIBSSH2_AGENT* raw, Session session) @nogc nothrow
     {
         this.raw = raw;
         this.session = session;
