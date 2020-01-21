@@ -51,7 +51,7 @@ package:
 public:
 
     /// Initialize an SSH session object.
-    this()
+    this() @nogc
     {
         this.raw = libssh2_session_init_ex(null, null, null, null);
         assert(this.raw !is null);
