@@ -30,7 +30,7 @@ class SessionErrnoException : Exception
     {
         string msg;
 
-        // Constructor calls nor allowed after label.
+        // Constructor calls not allowed after label.
         if (code == LIBSSH2_ERROR_BANNER_RECV)
             msg = "banner recv failure";
         else if (code == LIBSSH2_ERROR_BANNER_SEND)
