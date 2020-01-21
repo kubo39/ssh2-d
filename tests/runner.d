@@ -1,3 +1,5 @@
+import ssh2.agent;
+import ssh2.channel;
 import ssh2.session;
 
 import std.socket : InternetAddress;
@@ -11,7 +13,7 @@ InternetAddress testAddress() @safe
     import std.conv : parse;
     import std.process : environment;
 
-    auto s = environment.get("D_SSH2_FIXTURE_PORT", "22");
+    auto s = environment["D_SSH2_FIXTURE_PORT"];
     auto port = parse!ushort(s);
     return new InternetAddress("127.0.0.1", port);
 }
@@ -27,15 +29,14 @@ Session authedSession()
     sess.setSock(socket);
     sess.handshake();
     assert(!sess.authenticated());
-
     {
-        auto agent = sess.agent();
+        scope agent = sess.agent();
         agent.connect();
         agent.listIdentities();
-        auto identity = agent.identities().front;
+        scope identity = agent.identities().front;
         agent.userauth(user, identity);
     }
-    assert(sess.authenticated());
+   assert(sess.authenticated());
     return sess;
 }
 
@@ -131,6 +132,40 @@ void smokeAgent()
 }
 
 /**
+ *  Channel.
+ */
+void consumeStdio(Channel channel)
+{
+    import std.stdio;
+
+    ubyte[] _stdout = new ubyte[1024];
+    channel.writeBuffer(_stdout);
+
+    ubyte[] _stderr = new ubyte[1024];
+    channel.stderr().writeBuffer(_stderr);
+
+    stderr.writefln("stdout: %s", cast(string) _stdout);
+    stderr.writefln("stderr: %s", cast(string) _stderr);
+}
+
+void smokeChannel()
+{
+    auto sess = authedSession();
+    auto channel = sess.channelSession();
+    channel.flush();
+    channel.exec("true");
+    consumeStdio(channel);
+
+    channel.waitEOF();
+    assert(channel.eof());
+
+    channel.close();
+    channel.waitClosed();
+    assert(channel.exitStatus() == 0);
+    assert(channel.eof());
+}
+
+/**
  *  Entrypoint.
  */
 
@@ -142,4 +177,7 @@ void main()
 
     // Agent.
     smokeAgent();
+
+    // Channel.
+    smokeChannel();
 }

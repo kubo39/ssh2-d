@@ -2,6 +2,7 @@ module ssh2.session;
 
 private import ssh2.ffi;
 import ssh2.agent;
+import ssh2.channel;
 import ssh2.exception;
 
 import core.time : dur, Duration;
@@ -51,8 +52,6 @@ class Session
 {
 private:
     TcpSocket sock;
-
-package:
     LIBSSH2_SESSION* raw;
 
 public:
@@ -238,7 +237,7 @@ public:
         auto ptr = libssh2_agent_init(this.raw);
         if (ptr is null)
             throw new SessionErrnoException(LIBSSH2_ERROR_ALLOC);
-        return new Agent(ptr, this);
+        return new Agent(ptr, this.raw);
     }
 
     /// Returns computed digest of the remote system's hostkey.
@@ -256,5 +255,35 @@ public:
         if (ret is null)
             return null;
         return ret[0 .. len];
+    }
+
+    /// Establish new session-based channel.
+    Channel channelSession()
+    {
+        return this.channelOpen(
+            "session",
+            LIBSSH2_CHANNEL_WINDOW_DEFAULT,
+            LIBSSH2_CHANNEL_PACKET_DEFAULT,
+            null);
+    }
+
+    /// Allocate new channel to exchange data with server.
+    Channel channelOpen(string channel_type, uint window_size,
+                        uint packet_size, string message)
+    {
+        import std.string : toStringz;
+
+        const msg = message.length ? message.toStringz : null;
+        auto ptr = libssh2_channel_open_ex(
+            this.raw,
+            channel_type.toStringz,
+            cast(uint) channel_type.length,
+            window_size,
+            packet_size,
+            msg,
+            cast(uint) message.length);
+        if (ptr is null)
+            throw new SessionErrnoException(LIBSSH2_ERROR_ALLOC);
+        return new Channel(ptr, this.raw);
     }
 }

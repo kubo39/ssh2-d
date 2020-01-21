@@ -8,27 +8,27 @@ class Agent
 {
 private:
     LIBSSH2_AGENT* raw;
-    Session session;
+    LIBSSH2_SESSION* session;
 
 package:
-    this(LIBSSH2_AGENT* raw, Session session) @nogc nothrow
+    this(LIBSSH2_AGENT* raw, LIBSSH2_SESSION* session) @nogc nothrow
     {
         this.raw = raw;
         this.session = session;
     }
 
+public:
     ~this()
     {
         libssh2_agent_free(this.raw);
     }
 
-public:
     /// Connect to an ssh-agent running on the system.
     void connect()
     {
         auto rc = libssh2_agent_connect(this.raw);
         if (rc < 0)
-            throw new SessionError(this.session.raw, rc);
+            throw new SessionError(this.session, rc);
     }
 
     /// Close connection to an ssh-agent.
@@ -36,7 +36,7 @@ public:
     {
         auto rc = libssh2_agent_disconnect(this.raw);
         if (rc < 0)
-            throw new SessionError(this.session.raw, rc);
+            throw new SessionError(this.session, rc);
     }
 
     /// Request a ssh-agent to list of public keys and stores them
@@ -45,7 +45,7 @@ public:
     {
         auto rc = libssh2_agent_list_identities(this.raw);
         if (rc < 0)
-            throw new SessionError(this.session.raw, rc);
+            throw new SessionError(this.session, rc);
     }
 
     /// Get a range over the identities of this agent.
@@ -74,12 +74,12 @@ public:
                 this.publicKey = null;
             }
             else
-                throw new SessionError(this.agent.session.raw, rc);
+                throw new SessionError(this.agent.session, rc);
         }
 
     public:
         Agent agent;
-        PublicKey* publicKey;
+        PublicKey publicKey;
 
         this(Agent agent)
         {
@@ -97,7 +97,7 @@ public:
             getIdentity(this.prev);
         }
 
-        PublicKey* front() @nogc nothrow pure
+        PublicKey front() @nogc nothrow pure
         {
             return this.publicKey;
         }
@@ -107,7 +107,7 @@ public:
     static assert(isInputRange!Identities);
 
     /// Attempt public key authentication.
-    void userauth(string username, PublicKey* identity)
+    void userauth(string username, PublicKey identity)
     {
         import std.string : toStringz;
         auto rc = libssh2_agent_userauth(
@@ -115,14 +115,19 @@ public:
             username.toStringz,
             identity.raw);
         if (rc < 0)
-            throw new SessionError(this.session.raw, rc);
+            throw new SessionError(this.session, rc);
     }
 }
 
-struct PublicKey
+class PublicKey
 {
 package:
     libssh2_agent_publickey* raw;
+
+    this(libssh2_agent_publickey* raw)
+    {
+        this.raw = raw;
+    }
 
 public:
     /// Returns the data of this public key.

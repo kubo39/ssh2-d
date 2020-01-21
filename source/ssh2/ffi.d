@@ -28,6 +28,9 @@ enum LIBSSH2_METHOD_COMP_SC = 7;
 enum LIBSSH2_METHOD_LANG_CS = 8;
 enum LIBSSH2_METHOD_LANG_SC = 9;
 
+enum uint LIBSSH2_CHANNEL_WINDOW_DEFAULT = 32768;
+enum uint LIBSSH2_CHANNEL_PACKET_DEFAULT = 2 * 1024 * 1024;
+
 enum LIBSSH2_ERROR_BANNER_RECV = -2;
 enum LIBSSH2_ERROR_BANNER_SEND = -3;
 enum LIBSSH2_ERROR_INVALID_MAC = -4;
@@ -83,6 +86,7 @@ enum LIBSSH2_INIT_NO_CRYPTO = 0x1;
 
 struct LIBSSH2_SESSION;
 struct LIBSSH2_AGENT;
+struct LIBSSH2_CHANNEL;
 
 struct libssh2_agent_publickey
 {
@@ -167,6 +171,34 @@ int libssh2_agent_userauth(
     LIBSSH2_AGENT* agent,
     const(char)* username,
     libssh2_agent_publickey* identity);
+
+// channel
+int libssh2_channel_free(LIBSSH2_CHANNEL* chan);
+int libssh2_channel_close(LIBSSH2_CHANNEL* chan);
+int libssh2_channel_wait_closed(LIBSSH2_CHANNEL* chan);
+int libssh2_channel_wait_eof(LIBSSH2_CHANNEL* chan);
+int libssh2_channel_eof(LIBSSH2_CHANNEL* chan);
+int libssh2_channel_process_startup(
+    LIBSSH2_CHANNEL* chan,
+    const(char)* req,
+    uint req_len,
+    const(char)* msg,
+    uint msg_len);
+int libssh2_channel_flush_ex(LIBSSH2_CHANNEL* chan, int streamid);
+ptrdiff_t libssh2_channel_write_ex(
+    LIBSSH2_CHANNEL* chan,
+    int stream_id,
+    const(ubyte)* buf,
+    size_t buflen);
+int libssh2_channel_get_exit_status(LIBSSH2_CHANNEL* chan);
+LIBSSH2_CHANNEL* libssh2_channel_open_ex(
+    LIBSSH2_SESSION* sess,
+    const(char)* channel_type,
+    uint channel_type_len,
+    uint window_size,
+    uint packet_size,
+    const(char)* message,
+    uint message_len);
 
 // userauth
 int libssh2_userauth_authenticated(LIBSSH2_SESSION* sess);
