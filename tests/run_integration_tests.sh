@@ -9,7 +9,7 @@ export D_SSH2_FIXTURE_PORT=8022
 
 cleanup() {
     # Stop the ssh server and local ssh agent
-    kill $(< $SSHDIR/sshd.pid) || true
+    kill $(< $SSHDIR/sshd.pid) $SSH_AGENT_PID || true
 
     test -f $SSHDIR/sshd.log && cat $SSHDIR/sshd.log
 }
@@ -20,8 +20,11 @@ SSHDIR=$(pwd)/tests/sshd
 rm -rf $SSHDIR
 mkdir -p $SSHDIR
 
+eval $(ssh-agent -s)
+
 ssh-keygen -t rsa -f $SSHDIR/id_rsa -N "" -q
 chmod 0600 $SSHDIR/id_rsa*
+ssh-add $SSHDIR/id_rsa
 cp $SSHDIR/id_rsa.pub $SSHDIR/authorized_keys
 
 ssh-keygen -f $SSHDIR/ssh_host_rsa_key -N '' -t rsa
