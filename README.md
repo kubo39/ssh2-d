@@ -2,9 +2,15 @@
 
 D bindings to libssh2.
 
+## Prerequirements
+
+* D Compiler
+* OpenSSL >= 1.1.0.
+
 ## Develop
 
 - libssh2: 1.8.0
+- OpenSSL: 1.1.1
 
 ### Ubuntu 18.04
 
