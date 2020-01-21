@@ -138,3 +138,10 @@ int libssh2_keepalive_send(LIBSSH2_SESSION* sess, int* seconds_to_next);
 int libssh2_session_block_direction(LIBSSH2_SESSION* sess);
 
 // agent
+
+// userauth
+int libssh2_userauth_authenticated(LIBSSH2_SESSION* sess);
+const(char)* libssh2_userauth_list(
+    LIBSSH2_SESSION* sess,
+    const(char)* username,
+    uint username_len);

@@ -6,6 +6,7 @@ import ssh2.exception;
 import core.time : dur, Duration;
 import core.stdc.config : c_long;
 
+import std.socket : TcpSocket;
 import std.typecons : Tuple;
 
 
@@ -42,6 +43,7 @@ class Session
 {
 private:
     LIBSSH2_SESSION* raw;
+    TcpSocket sock;
 
 public:
 
@@ -195,5 +197,41 @@ public:
         }
         libssh2_free(this.raw, cast(void*) algs);
         return ret;
+    }
+
+    ///
+    void setSock(TcpSocket sock)
+    {
+        this.sock = sock;
+    }
+
+    /// Begin transport layer protocol negotiation with the connected host.
+    void handshake()
+    {
+        if (this.sock is null)
+            throw new SessionErrnoException(LIBSSH2_ERROR_BAD_SOCKET);
+        const rc = libssh2_session_handshake(this.raw, this.sock.handle);
+        if (rc < 0)
+            throw new SessionError(this.raw, rc);
+    }
+
+    /// Send a SSH_USERAUTH_NONE request to the remote host.
+    string authMethods(string username)
+    {
+        import std.string : fromStringz, toStringz;
+        auto ret = libssh2_userauth_list(
+            this.raw,
+            username.toStringz,
+            cast(uint) username.length
+            );
+        if (ret is null)
+            assert(false);
+        return cast(immutable) ret.fromStringz;
+    }
+
+    /// Wheter the named session has been authenticated or not.
+    bool authenticated() @nogc nothrow
+    {
+        return libssh2_userauth_authenticated(this.raw) != 0;
     }
 }

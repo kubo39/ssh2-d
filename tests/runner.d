@@ -1,5 +1,17 @@
 import ssh2.session;
 
+import std.socket : InternetAddress;
+
+InternetAddress testAddress() @safe
+{
+    import std.conv : parse;
+    import std.process : environment;
+
+    auto s = environment.get("D_SSH2_FIXTURE_PORT", "22");
+    auto port = parse!ushort(s);
+    return new InternetAddress("127.0.0.1", port);
+}
+
 void smokeSession()
 {
     import core.time : msecs;
@@ -18,8 +30,26 @@ void smokeSession()
     assert(sess.supprtedAlgs(MethodType.HOSTKEY).length > 0);
 }
 
+void smokeSessionHandshake()
+{
+    import std.process : environment;
+    import std.socket : TcpSocket;
+    import std.string : indexOf;
+
+    auto user = environment["USER"];
+    auto sock = new TcpSocket(testAddress());
+    auto sess = new Session();
+    sess.setSock(sock);
+    sess.handshake();
+    sess.hostKey();
+    auto methods = sess.authMethods(user);
+    assert(methods.indexOf("publickey") >= 0, methods);
+    assert(!sess.authenticated());
+}
+
 void main()
 {
     // Session.
     smokeSession();
+    smokeSessionHandshake();
 }
