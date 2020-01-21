@@ -242,6 +242,8 @@ public:
     Agent agent()
     {
         auto ptr = libssh2_agent_init(this.raw);
+        if (ptr is null)
+            throw new SessionErrnoException(LIBSSH2_ERROR_ALLOC);
         return new Agent(ptr, this);
     }
 }
