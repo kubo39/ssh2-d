@@ -26,7 +26,7 @@ class SessionError : Exception
 class SessionErrnoException : Exception
 {
     this(int code, string file = __FILE__, size_t line = __LINE__,
-         Throwable next = null)
+         Throwable next = null) @nogc
     {
         string msg;
 

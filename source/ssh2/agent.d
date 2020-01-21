@@ -87,7 +87,7 @@ public:
             getIdentity(null);
         }
 
-        bool empty()
+        bool empty() @nogc nothrow
         {
             return this.prev is null;
         }
@@ -97,7 +97,7 @@ public:
             getIdentity(this.prev);
         }
 
-        PublicKey* front()
+        PublicKey* front() @nogc nothrow
         {
             return this.publicKey;
         }

@@ -72,7 +72,7 @@ public:
     }
 
     /// Get the remote banner.
-    string banner()
+    string banner() @nogc nothrow
     {
         import std.string : fromStringz;
         auto ret = libssh2_session_banner_get(this.raw);
@@ -95,7 +95,7 @@ public:
     ///
     /// By default: 0, and this means libssh2 has not timeout for blocking
     /// functions.
-    void timeout(Duration timeout)
+    void timeout(Duration timeout) @nogc nothrow
     {
         const timeout_ms = cast(c_long) timeout.total!"msecs";
         libssh2_session_set_timeout(this.raw, timeout_ms);
@@ -105,7 +105,7 @@ public:
     /// wait until they time-out.
     ///
     /// A timeout of 0 means no timeout.
-    Duration timeout()
+    Duration timeout() @nogc nothrow
     {
         const timeout_ms = libssh2_session_get_timeout(this.raw);
         return dur!"msecs"(timeout_ms);
@@ -177,7 +177,7 @@ public:
     }
 
     /// Returns the currently active algorithm.
-    string methods(MethodType method_type)
+    string methods(MethodType method_type) @nogc nothrow
     {
         import std.string : fromStringz;
         const ptr = libssh2_session_methods(this.raw, cast(int) method_type);
@@ -203,7 +203,7 @@ public:
     }
 
     ///
-    void setSock(TcpSocket sock)
+    void setSock(TcpSocket sock) @nogc nothrow
     {
         this.sock = sock;
     }
@@ -219,7 +219,7 @@ public:
     }
 
     /// Send a SSH_USERAUTH_NONE request to the remote host.
-    string authMethods(string username)
+    string authMethods(string username) nothrow
     {
         import std.string : fromStringz, toStringz;
         auto ret = libssh2_userauth_list(
