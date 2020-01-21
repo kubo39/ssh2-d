@@ -103,6 +103,9 @@ public:
         }
     }
 
+    import std.range : isInputRange;
+    static assert(isInputRange!Identities);
+
     /// Attempt public key authentication.
     void userauth(string username, PublicKey* identity)
     {
