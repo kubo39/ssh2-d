@@ -97,7 +97,9 @@ alias LIBSSH2_ALLOC_FUNC = void* function(size_t, void**);
 alias LIBSSH2_FREE_FUNC = void function(void*, void**);
 alias LIBSSH2_REALLOC_FUNC = void* function(void*, size_t, void**);
 
-alias libssh2_socket_t = int;
+version (Posix) alias libssh2_socket_t = int;
+version (Win32) alias libssh2_socket_t = uint;
+version (Win64) alias libssh2_socket_t = ulong;
 
 // misc
 int libssh2_init(int flag);
