@@ -47,9 +47,20 @@ void smokeSessionHandshake()
     assert(!sess.authenticated());
 }
 
+void smokeAgent()
+{
+    auto sess = new Session;
+    auto agent = sess.agent();
+    agent.connect();
+    agent.disconnect();
+}
+
 void main()
 {
     // Session.
     smokeSession();
     smokeSessionHandshake();
+
+    // Agent.
+    smokeAgent();
 }

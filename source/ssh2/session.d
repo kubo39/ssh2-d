@@ -1,6 +1,7 @@
 module ssh2.session;
 
 private import ssh2.ffi;
+import ssh2.agent;
 import ssh2.exception;
 
 import core.time : dur, Duration;
@@ -42,8 +43,10 @@ alias HostKey = Tuple!(const(ubyte)[], "data", HostKeyType, "type");
 class Session
 {
 private:
-    LIBSSH2_SESSION* raw;
     TcpSocket sock;
+
+package:
+    LIBSSH2_SESSION* raw;
 
 public:
 
@@ -233,5 +236,12 @@ public:
     bool authenticated() @nogc nothrow
     {
         return libssh2_userauth_authenticated(this.raw) != 0;
+    }
+
+    /// Initialize ssh-agent handle.
+    Agent agent()
+    {
+        auto ptr = libssh2_agent_init(this.raw);
+        return new Agent(ptr, this);
     }
 }

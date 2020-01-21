@@ -149,7 +149,7 @@ int libssh2_session_block_direction(LIBSSH2_SESSION* sess);
 
 // agent
 LIBSSH2_AGENT* libssh2_agent_init(LIBSSH2_SESSION* sess);
-void libssh2_free(LIBSSH2_AGENT* agent);
+void libssh2_agent_free(LIBSSH2_AGENT* agent);
 int libssh2_agent_connect(LIBSSH2_AGENT* agent);
 int libssh2_agent_disconnect(LIBSSH2_AGENT* agent);
 int libssh2_agent_list_identities(LIBSSH2_AGENT* agent);
