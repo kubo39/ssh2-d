@@ -26,7 +26,7 @@ public:
     /// Connect to an ssh-agent running on the system.
     void connect()
     {
-        const rc = libssh2_agent_connect(this.raw);
+        auto rc = libssh2_agent_connect(this.raw);
         if (rc < 0)
             throw new SessionError(this.session.raw, rc);
     }
@@ -34,7 +34,7 @@ public:
     /// Close connection to an ssh-agent.
     void disconnect()
     {
-        const rc = libssh2_agent_disconnect(this.raw);
+        auto rc = libssh2_agent_disconnect(this.raw);
         if (rc < 0)
             throw new SessionError(this.session.raw, rc);
     }
@@ -43,7 +43,7 @@ public:
     /// into the internal collection of the handle.
     void listIdentities()
     {
-        const rc = libssh2_agent_list_identities(this.raw);
+        auto rc = libssh2_agent_list_identities(this.raw);
         if (rc < 0)
             throw new SessionError(this.session.raw, rc);
     }
@@ -62,7 +62,7 @@ public:
         void getIdentity(libssh2_agent_publickey* prev)
         {
             libssh2_agent_publickey* next;
-            const rc = libssh2_agent_get_identity(this.agent.raw, &next, prev);
+            auto rc = libssh2_agent_get_identity(this.agent.raw, &next, prev);
             if (rc == 0)
             {
                 this.prev = next;
@@ -87,7 +87,7 @@ public:
             getIdentity(null);
         }
 
-        bool empty() @nogc nothrow
+        bool empty() @nogc nothrow pure
         {
             return this.prev is null;
         }
@@ -97,7 +97,7 @@ public:
             getIdentity(this.prev);
         }
 
-        PublicKey* front() @nogc nothrow
+        PublicKey* front() @nogc nothrow pure
         {
             return this.publicKey;
         }
@@ -110,7 +110,7 @@ public:
     void userauth(string username, PublicKey* identity)
     {
         import std.string : toStringz;
-        const rc = libssh2_agent_userauth(
+        auto rc = libssh2_agent_userauth(
             this.raw,
             username.toStringz,
             identity.raw);
@@ -126,13 +126,13 @@ package:
 
 public:
     /// Returns the data of this public key.
-    const(ubyte)[] blob() @nogc nothrow
+    const(ubyte)[] blob() @nogc nothrow pure
     {
         return this.raw.blob[0 ..this.raw.blob_len];
     }
 
     /// Returns the comment.
-    string comment() @nogc nothrow
+    string comment() @nogc nothrow pure
     {
         import std.string : fromStringz;
         return cast(immutable) this.raw.comment.fromStringz;
