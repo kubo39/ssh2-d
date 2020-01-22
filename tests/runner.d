@@ -30,13 +30,14 @@ Session authedSession()
     sess.handshake();
     assert(!sess.authenticated());
     {
-        scope agent = sess.agent();
+        auto agent = sess.agent();
         agent.connect();
         agent.listIdentities();
-        scope identity = agent.identities().front;
+        auto identity = agent.identities().front;
         agent.userauth(user, identity);
+        agent.destroy();
     }
-   assert(sess.authenticated());
+    assert(sess.authenticated());
     return sess;
 }
 
@@ -86,6 +87,7 @@ void smokeSessionHandshake()
         assert(identity !is null);
         agent.userauth(user, identity);
     }
+    agent.destroy();
     assert(sess.authenticated());
     assert(sess.hostKeyHash(HashType.MD5) !is null);
 }
@@ -129,6 +131,7 @@ void smokeAgent()
         assertThrown(agent.userauth("foo", i1));
     }
     agent.disconnect();
+    agent.destroy();
 }
 
 /**
@@ -163,6 +166,7 @@ void smokeChannel()
     channel.waitClosed();
     assert(channel.exitStatus() == 0);
     assert(channel.eof());
+    channel.destroy();
 }
 
 void badSmokeChannel()
@@ -180,6 +184,7 @@ void badSmokeChannel()
     channel.waitClosed();
     assert(channel.exitStatus() == 1);
     assert(channel.eof());
+    channel.destroy();
 }
 
 /**
