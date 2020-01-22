@@ -137,18 +137,24 @@ void smokeAgent()
 /**
  *  Channel.
  */
-void consumeStdio(Channel channel)
+
+import std.typecons;
+
+auto consumeStdio(Channel channel)
 {
     import std.stdio;
 
-    ubyte[] _stdout = new ubyte[1024];
-    channel.writeBuffer(_stdout);
+    ubyte[1024] _stdout;
+    auto ret1 = channel.read(_stdout[]);
 
-    ubyte[] _stderr = new ubyte[1024];
-    channel.stderr().writeBuffer(_stderr);
+    ubyte[1024] _stderr;
+    auto ret2 = channel.stderr().read(_stderr[]);
 
     stderr.writefln("stdout: %s", cast(string) _stdout);
     stderr.writefln("stderr: %s", cast(string) _stderr);
+
+    return tuple(cast(string) _stdout[0 .. ret1],
+                 cast(string) _stderr[0 .. ret2]);
 }
 
 void smokeChannel()
@@ -187,6 +193,17 @@ void badSmokeChannel()
     channel.destroy();
 }
 
+void readingDataChannel()
+{
+    auto sess = authedSession();
+    auto channel = sess.channelSession();
+    channel.exec("echo foo");
+
+    auto pair = consumeStdio(channel);
+    channel.destroy();
+    assert(pair[0] == "foo\n");
+}
+
 /**
  *  Entrypoint.
  */
@@ -203,4 +220,5 @@ void main()
     // Channel.
     smokeChannel();
     badSmokeChannel();
+    readingDataChannel();
 }

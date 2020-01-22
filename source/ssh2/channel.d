@@ -67,9 +67,9 @@ public:
         this.stream(0).flush();
     }
 
-    void writeBuffer(ubyte[] buffer)
+    size_t read(ubyte[] buffer)
     {
-        this.stream(0).writeBuffer(buffer);
+        return this.stream(0).read(buffer);
     }
 
     void waitEOF()
@@ -130,14 +130,17 @@ public:
             throw new SessionError(this.channel.session, rc);
     }
 
-    void writeBuffer(ubyte[] writer)
+    size_t read(ubyte[] data)
     {
-        auto rc = libssh2_channel_write_ex(
+        if (this.channel.eof())
+            return 0;
+        auto rc = libssh2_channel_read_ex(
             this.channel.raw,
             this.id,
-            writer.ptr,
-            writer.length);
+            data.ptr,
+            data.length);
         if (rc < 0)
             throw new SessionError(this.channel.session, cast(int) rc);
+        return cast(size_t) rc;
     }
 }

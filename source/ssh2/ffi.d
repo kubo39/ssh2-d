@@ -199,6 +199,11 @@ LIBSSH2_CHANNEL* libssh2_channel_open_ex(
     uint packet_size,
     const(char)* message,
     uint message_len);
+ptrdiff_t libssh2_channel_read_ex(
+    LIBSSH2_CHANNEL* chan,
+    int stream_id,
+    ubyte* buf,
+    size_t buflen);
 
 // userauth
 int libssh2_userauth_authenticated(LIBSSH2_SESSION* sess);
