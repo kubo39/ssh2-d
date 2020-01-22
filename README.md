@@ -20,6 +20,8 @@ $ apt install libssh2-1-dev
 
 ## Tests
 
+**NOTE**: Since DMD 2.090.0 default test mode has been changed. Do not run tests DMD >= 2.090.0 at least now.
+
 ```console
 $ tests/run_integration_tests.sh
 ```
