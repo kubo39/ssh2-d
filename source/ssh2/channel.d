@@ -9,6 +9,14 @@ import std.range : isOutputRange;
 /// Stream ID of the stderr channel.
 private static int EXTENDED_DATA_STDERR = 1;
 
+/// How to handle extended data
+enum ExtendedData
+{
+    NORMAL = LIBSSH2_CHANNEL_EXTENDED_DATA_NORMAL,
+    IGNORE = LIBSSH2_CHANNEL_EXTENDED_DATA_IGNORE,
+    MERGE = LIBSSH2_CHANNEL_EXTENDED_DATA_MERGE,
+}
+
 /// A channel represents a portion of SSH connection.
 class Channel
 {
@@ -106,6 +114,14 @@ public:
     int exitStatus() @nogc nothrow
     {
         return libssh2_channel_get_exit_status(this.raw);
+    }
+
+    /// Change how extended data is handled.
+    void handleExtendedData(ExtendedData mode)
+    {
+        auto rc = libssh2_channel_handle_extended_data2(this.raw, mode);
+        if (rc < 0)
+            throw new SessionError(this.session, rc);
     }
 }
 

@@ -204,6 +204,19 @@ void readingDataChannel()
     assert(pair[0] == "foo\n");
 }
 
+void handleExtendedData()
+{
+    import std.string : endsWith;
+
+    auto sess = authedSession();
+    auto channel = sess.channelSession();
+    channel.handleExtendedData(ExtendedData.MERGE);
+    channel.exec("echo foo >&2");
+    auto pair = consumeStdio(channel);
+    channel.destroy();
+    assert(pair[0].endsWith("foo\n"));
+}
+
 /**
  *  Entrypoint.
  */
@@ -221,4 +234,5 @@ void main()
     smokeChannel();
     badSmokeChannel();
     readingDataChannel();
+    handleExtendedData();
 }

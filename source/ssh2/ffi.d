@@ -84,6 +84,10 @@ enum LIBSSH2_HOSTKEY_HASH_SHA256 = 3;
 
 enum LIBSSH2_INIT_NO_CRYPTO = 0x1;
 
+enum LIBSSH2_CHANNEL_EXTENDED_DATA_NORMAL = 0;
+enum LIBSSH2_CHANNEL_EXTENDED_DATA_IGNORE = 1;
+enum LIBSSH2_CHANNEL_EXTENDED_DATA_MERGE = 2;
+
 struct LIBSSH2_SESSION;
 struct LIBSSH2_AGENT;
 struct LIBSSH2_CHANNEL;
@@ -204,6 +208,7 @@ ptrdiff_t libssh2_channel_read_ex(
     int stream_id,
     ubyte* buf,
     size_t buflen);
+int libssh2_channel_handle_extended_data2(LIBSSH2_CHANNEL* channel, int mode);
 
 // userauth
 int libssh2_userauth_authenticated(LIBSSH2_SESSION* sess);
