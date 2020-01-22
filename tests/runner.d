@@ -217,6 +217,17 @@ void handleExtendedData()
     assert(pair[0].endsWith("foo\n"));
 }
 
+void writingDataChannel()
+{
+    auto sess = authedSession();
+    auto channel = sess.channelSession();
+    channel.exec("read foo && echo $foo");
+    channel.write("foo\n");
+    auto pair = consumeStdio(channel);
+    channel.destroy();
+    assert(pair[0] == "foo\n");
+}
+
 /**
  *  Entrypoint.
  */
@@ -235,4 +246,5 @@ void main()
     badSmokeChannel();
     readingDataChannel();
     handleExtendedData();
+    writingDataChannel();
 }

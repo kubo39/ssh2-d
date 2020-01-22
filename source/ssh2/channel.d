@@ -80,6 +80,11 @@ public:
         return this.stream(0).read(buffer);
     }
 
+    size_t write(string buffer)
+    {
+        return this.stream(0).write(cast(const ubyte[]) buffer);
+    }
+
     void waitEOF()
     {
         auto rc = libssh2_channel_wait_eof(this.raw);
@@ -158,5 +163,17 @@ public:
         if (rc < 0)
             throw new SessionError(this.channel.session, cast(int) rc);
         return cast(size_t) rc;
+    }
+
+    size_t write(const ubyte[] data)
+    {
+        auto rc = libssh2_channel_write_ex(
+            this.channel.raw,
+            this.id,
+            data.ptr,
+            data.length);
+        if (rc < 0)
+            throw new SessionError(this.channel.session, cast(int) rc);
+        return rc;
     }
 }
