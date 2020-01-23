@@ -44,7 +44,7 @@ Session authedSession()
  *  Session.
  */
 
-void smokeSession()
+void sessionSmoke()
 {
     import core.time : msecs;
 
@@ -62,7 +62,7 @@ void smokeSession()
     assert(sess.supprtedAlgs(MethodType.HOSTKEY).length > 0);
 }
 
-void smokeSessionHandshake()
+void sessionSmokeHandshake()
 {
     import std.process : environment;
     import std.socket : TcpSocket;
@@ -91,7 +91,7 @@ void smokeSessionHandshake()
     assert(sess.hostKeyHash(HashType.MD5) !is null);
 }
 
-void keyboardInteractive()
+void sessionKeyboardInteractive()
 {
     import std.format : format;
     import std.process : environment;
@@ -115,7 +115,7 @@ void keyboardInteractive()
  *  Agent.
  */
 
-void smokeAgent()
+void agentSmoke()
 {
     import std.exception : assertThrown;
 
@@ -156,7 +156,7 @@ auto consumeStdio(Channel channel)
                  cast(string) _stderr[0 .. ret2]);
 }
 
-void smokeChannel()
+void channelSmoke()
 {
     auto sess = authedSession();
     auto channel = sess.channelSession();
@@ -174,7 +174,7 @@ void smokeChannel()
     channel.destroy();
 }
 
-void badSmokeChannel()
+void channelBadSmoke()
 {
     auto sess = authedSession();
     auto channel = sess.channelSession();
@@ -192,7 +192,7 @@ void badSmokeChannel()
     channel.destroy();
 }
 
-void readingDataChannel()
+void channelReadingData()
 {
     auto sess = authedSession();
     auto channel = sess.channelSession();
@@ -203,7 +203,7 @@ void readingDataChannel()
     assert(pair[0] == "foo\n");
 }
 
-void handleExtendedData()
+void channelHandleExtendedData()
 {
     import std.string : endsWith;
 
@@ -216,7 +216,7 @@ void handleExtendedData()
     assert(pair[0].endsWith("foo\n"));
 }
 
-void writingDataChannel()
+void channelWritingData()
 {
     auto sess = authedSession();
     auto channel = sess.channelSession();
@@ -227,7 +227,7 @@ void writingDataChannel()
     assert(pair[0] == "foo\n");
 }
 
-void eofChannel()
+void channelEof()
 {
     auto sess = authedSession();
     auto channel = sess.channelSession();
@@ -240,7 +240,7 @@ void eofChannel()
     assert(cast(string) output[0 .. len] == "");
 }
 
-void shellChannel()
+void channelShell()
 {
     import std.stdio;
 
@@ -264,18 +264,18 @@ void shellChannel()
 void main()
 {
     // Session.
-    smokeSession();
-    smokeSessionHandshake();
+    sessionSmoke();
+    sessionSmokeHandshake();
 
     // Agent.
-    smokeAgent();
+    agentSmoke();
 
     // Channel.
-    smokeChannel();
-    badSmokeChannel();
-    readingDataChannel();
-    handleExtendedData();
-    writingDataChannel();
-    eofChannel();
-    shellChannel();
+    channelSmoke();
+    channelBadSmoke();
+    channelReadingData();
+    channelHandleExtendedData();
+    channelWritingData();
+    channelEof();
+    channelShell();
 }
