@@ -228,6 +228,19 @@ void writingDataChannel()
     assert(pair[0] == "foo\n");
 }
 
+void eofChannel()
+{
+    auto sess = authedSession();
+    auto channel = sess.channelSession();
+    channel.adjustReceiveWindow(10, true);
+    channel.exec("read goo");
+    channel.sendEOF();
+    ubyte[1024] output;
+    auto len = channel.read(output);
+    channel.destroy();
+    assert(cast(string) output[0 .. len] == "");
+}
+
 /**
  *  Entrypoint.
  */
@@ -247,4 +260,5 @@ void main()
     readingDataChannel();
     handleExtendedData();
     writingDataChannel();
+    eofChannel();
 }

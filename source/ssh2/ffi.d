@@ -189,6 +189,7 @@ int libssh2_channel_process_startup(
     const(char)* msg,
     uint msg_len);
 int libssh2_channel_flush_ex(LIBSSH2_CHANNEL* chan, int streamid);
+int libssh2_channel_send_eof(LIBSSH2_CHANNEL* chan);
 ptrdiff_t libssh2_channel_write_ex(
     LIBSSH2_CHANNEL* chan,
     int stream_id,
@@ -208,6 +209,11 @@ ptrdiff_t libssh2_channel_read_ex(
     int stream_id,
     ubyte* buf,
     size_t buflen);
+int libssh2_channel_receive_window_adjust2(
+    LIBSSH2_CHANNEL* chan,
+    ulong adjust,
+    ubyte force,
+    uint* window);
 int libssh2_channel_handle_extended_data2(LIBSSH2_CHANNEL* channel, int mode);
 
 // userauth

@@ -97,6 +97,14 @@ public:
         return libssh2_channel_eof(this.raw) != 0;
     }
 
+    /// Tell the remote host that no futher data will be sent on.
+    void sendEOF()
+    {
+        auto rc = libssh2_channel_send_eof(this.raw);
+        if (rc < 0)
+            throw new SessionError(this.session, rc);
+    }
+
     /// Close an active data channel.
     void close()
     {
@@ -127,6 +135,20 @@ public:
         auto rc = libssh2_channel_handle_extended_data2(this.raw, mode);
         if (rc < 0)
             throw new SessionError(this.session, rc);
+    }
+
+    /// Adjust the receive window for a channel.
+    ulong adjustReceiveWindow(ulong adjust, bool force)
+    {
+        uint ret;
+        auto rc = libssh2_channel_receive_window_adjust2(
+            this.raw,
+            adjust,
+            cast(ubyte) force,
+            &ret);
+        if (rc < 0)
+            throw new SessionError(this.session, rc);
+        return cast(ulong) ret;
     }
 }
 
