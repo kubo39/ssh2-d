@@ -4,6 +4,7 @@ private import ssh2.ffi;
 import ssh2.agent;
 import ssh2.channel;
 import ssh2.exception;
+import ssh2.knownhosts;
 
 import core.time : dur, Duration;
 import core.stdc.config : c_long;
@@ -238,6 +239,15 @@ public:
         if (ptr is null)
             throw new SessionErrnoException(LIBSSH2_ERROR_ALLOC);
         return new Agent(ptr, this.raw);
+    }
+
+    /// Initialize a collection of knownhosts for this session.
+    Knownhosts knownhosts()
+    {
+        auto ptr = libssh2_knownhost_init(this.raw);
+        if (ptr is null)
+            throw new SessionErrnoException(LIBSSH2_ERROR_ALLOC);
+        return new Knownhosts(ptr, this.raw);
     }
 
     /// Returns computed digest of the remote system's hostkey.

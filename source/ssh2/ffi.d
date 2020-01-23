@@ -91,6 +91,7 @@ enum LIBSSH2_CHANNEL_EXTENDED_DATA_MERGE = 2;
 struct LIBSSH2_SESSION;
 struct LIBSSH2_AGENT;
 struct LIBSSH2_CHANNEL;
+struct LIBSSH2_KNOWNHOSTS;
 
 struct libssh2_agent_publickey
 {
@@ -99,6 +100,15 @@ struct libssh2_agent_publickey
     ubyte* blob;
     size_t blob_len;
     char* comment;
+}
+
+struct libssh2_knownhost
+{
+    uint magic;
+    void* node;
+    char* name;
+    char* key;
+    int typemask;
 }
 
 alias LIBSSH2_ALLOC_FUNC = void* function(size_t, void**);
@@ -232,3 +242,11 @@ const(char)* libssh2_userauth_list(
     LIBSSH2_SESSION* sess,
     const(char)* username,
     uint username_len);
+
+// knownhosts
+void libssh2_knownhost_free(LIBSSH2_KNOWNHOSTS* hosts);
+int libssh2_knownhost_get(
+    LIBSSH2_KNOWNHOSTS* hosts,
+    libssh2_knownhost** store,
+    libssh2_knownhost* prev);
+LIBSSH2_KNOWNHOSTS* libssh2_knownhost_init(LIBSSH2_SESSION* sess);

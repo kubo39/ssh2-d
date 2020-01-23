@@ -258,6 +258,19 @@ void channelShell()
 }
 
 /**
+ *  Knownhosts
+ */
+
+void knownhostsSmoke()
+{
+    import std.range;
+    auto sess = new Session;
+    auto hosts = sess.knownhosts();
+    assert(hosts[].walkLength() == 0);
+    hosts.destroy();
+}
+
+/**
  *  Entrypoint.
  */
 
@@ -278,4 +291,7 @@ void main()
     channelWritingData();
     channelEof();
     channelShell();
+
+    // Knownhosts.
+    knownhostsSmoke();
 }
