@@ -45,6 +45,15 @@ enum HashType
     SHA256 = LIBSSH2_HOSTKEY_HASH_SHA256,
 }
 
+/// I/O direction an application has to wait for in order not to block.
+enum BlockDirections
+{
+    NONE,
+    INBOUND,
+    OUTBOUND,
+    BOTH,
+}
+
 alias HostKey = Tuple!(const(ubyte)[], "data", HostKeyType, "type");
 
 
@@ -217,6 +226,24 @@ public:
     {
         this.sock = sock;
         handshake();
+    }
+
+    /// Returns the blocked I/O directions.
+    BlockDirections blockDirections()
+    {
+        auto dir = libssh2_session_block_directions(this.raw);
+        switch (dir)
+        {
+        case LIBSSH2_SESSION_BLOCK_INBOUND:
+            return BlockDirections.INBOUND;
+        case LIBSSH2_SESSION_BLOCK_OUTBOUND:
+            return BlockDirections.OUTBOUND;
+        case LIBSSH2_SESSION_BLOCK_INBOUND | LIBSSH2_SESSION_BLOCK_OUTBOUND:
+            return blockDirections.BOTH;
+        default:
+            return BlockDirections.NONE;
+        }
+        assert(false, "unreachable!");
     }
 
     /// Set keepalive messages should be sent.

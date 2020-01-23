@@ -1,5 +1,6 @@
 module ssh2;
 
+public import ssh2.exception;
 public import ssh2.channel;
 public import ssh2.session;
 

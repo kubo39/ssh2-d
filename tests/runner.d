@@ -116,6 +116,16 @@ void sessionKeepalive()
     sess.sendKeepalive();
 }
 
+void sessionBlockDirection()
+{
+    import std.exception : assertThrown;
+
+    auto sess = authedSession();
+    sess.blocking(false);
+    assertThrown!SessionError(sess.handshake());
+    assert(sess.blockDirections() == BlockDirections.INBOUND);
+}
+
 /**
  *  Agent.
  */
@@ -286,6 +296,7 @@ void main()
     sessionSmokeHandshake();
     sessionKeyboardInteractive();
     sessionKeepalive();
+    sessionBlockDirection();
 
     // Agent.
     agentSmoke();

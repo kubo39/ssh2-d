@@ -88,6 +88,9 @@ enum LIBSSH2_CHANNEL_EXTENDED_DATA_NORMAL = 0;
 enum LIBSSH2_CHANNEL_EXTENDED_DATA_IGNORE = 1;
 enum LIBSSH2_CHANNEL_EXTENDED_DATA_MERGE = 2;
 
+enum LIBSSH2_SESSION_BLOCK_INBOUND = 1;
+enum LIBSSH2_SESSION_BLOCK_OUTBOUND = 2;
+
 struct LIBSSH2_SESSION;
 struct LIBSSH2_AGENT;
 struct LIBSSH2_CHANNEL;
@@ -169,7 +172,7 @@ void libssh2_keepalive_config(
     int want_reply,
     uint interval);
 int libssh2_keepalive_send(LIBSSH2_SESSION* sess, int* seconds_to_next);
-int libssh2_session_block_direction(LIBSSH2_SESSION* sess);
+int libssh2_session_block_directions(LIBSSH2_SESSION* sess);
 
 // agent
 LIBSSH2_AGENT* libssh2_agent_init(LIBSSH2_SESSION* sess);
