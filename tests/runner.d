@@ -279,6 +279,7 @@ void main()
     // Session.
     sessionSmoke();
     sessionSmokeHandshake();
+    sessionKeyboardInteractive();
 
     // Agent.
     agentSmoke();
