@@ -3,6 +3,7 @@ module ssh2.channel;
 private import ssh2.ffi;
 import ssh2.exception;
 import ssh2.session;
+public import ssh2.util : Dimension, PtyModes;
 
 import std.range : isOutputRange;
 
@@ -43,8 +44,14 @@ public:
         this.processStartup("exec", command);
     }
 
+    /// Start shell.
+    void shell()
+    {
+        this.processStartup("shell");
+    }
+
     /// Initiate request on a session type channel.
-    void processStartup(string request, string message)
+    void processStartup(string request, string message = null)
     {
         import std.string : toStringz;
         const msg = message.length ? message.toStringz : null;
@@ -149,6 +156,29 @@ public:
         if (rc < 0)
             throw new SessionError(this.session, rc);
         return cast(ulong) ret;
+    }
+
+    /// Request PT on established channel.
+    void requestPTY(string term)
+    {
+        requestPTY(term, PtyModes([]), Dimension(80, 24, 0, 0));
+    }
+
+    /// Ditto.
+    void requestPTY(string term, PtyModes mode, Dimension dim)
+    {
+        import std.string : toStringz;
+
+        libssh2_channel_request_pty_ex(
+            this.raw,
+            term.toStringz,
+            cast(uint) term.length,
+            mode.ptr,
+            cast(uint) mode.length,
+            dim.width,
+            dim.height,
+            dim.width_px,
+            dim.height_px);
     }
 }
 

@@ -241,6 +241,23 @@ void eofChannel()
     assert(cast(string) output[0 .. len] == "");
 }
 
+void shellChannel()
+{
+    import std.stdio;
+
+    auto sess = authedSession();
+    auto channel = sess.channelSession();
+    stderr.writeln("requesting pty");
+    channel.requestPTY("xterm");
+    stderr.writeln("shell");
+    channel.shell();
+    stderr.writeln("close");
+    channel.close();
+    stderr.writeln("done");
+    consumeStdio(channel);
+    channel.destroy();
+}
+
 /**
  *  Entrypoint.
  */
@@ -261,4 +278,5 @@ void main()
     handleExtendedData();
     writingDataChannel();
     eofChannel();
+    shellChannel();
 }

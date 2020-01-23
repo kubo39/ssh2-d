@@ -190,6 +190,16 @@ int libssh2_channel_process_startup(
     uint msg_len);
 int libssh2_channel_flush_ex(LIBSSH2_CHANNEL* chan, int streamid);
 int libssh2_channel_send_eof(LIBSSH2_CHANNEL* chan);
+int libssh2_channel_request_pty_ex(
+    LIBSSH2_CHANNEL* chan,
+    const(char)* term,
+    uint termlen,
+    const(ubyte)* modes,
+    uint modeslen,
+    int width,
+    int height,
+    int width_px,
+    int height_px);
 ptrdiff_t libssh2_channel_write_ex(
     LIBSSH2_CHANNEL* chan,
     int stream_id,
