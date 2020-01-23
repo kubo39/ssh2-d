@@ -1,4 +1,3 @@
-import ssh2.agent;
 import ssh2.channel;
 import ssh2.session;
 
