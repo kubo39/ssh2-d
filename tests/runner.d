@@ -1,5 +1,4 @@
-import ssh2.channel;
-import ssh2.session;
+import ssh2;
 
 import std.socket : InternetAddress;
 
