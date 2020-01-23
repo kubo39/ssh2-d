@@ -24,8 +24,7 @@ Session authedSession()
     auto user = environment["USER"];
     auto socket = new TcpSocket(testAddress());
     auto sess = new Session;
-    sess.setSock(socket);
-    sess.handshake();
+    sess.handshake(socket);
     assert(!sess.authenticated());
     {
         auto agent = sess.agent();

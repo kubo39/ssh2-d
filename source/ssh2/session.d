@@ -212,6 +212,13 @@ public:
             throw new SessionError(this.raw, rc);
     }
 
+    /// Ditto.
+    void handshake(TcpSocket sock)
+    {
+        this.sock = sock;
+        handshake();
+    }
+
     /// Set keepalive messages should be sent.
     void keepalive(bool want_reply, uint interval)
     {
