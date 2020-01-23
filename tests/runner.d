@@ -111,6 +111,13 @@ void sessionKeyboardInteractive()
     assert(!sess.authenticated());
 }
 
+void sessionKeepalive()
+{
+    auto sess = authedSession();
+    sess.keepalive(false, 10);
+    sess.sendKeepalive();
+}
+
 /**
  *  Agent.
  */
@@ -280,6 +287,7 @@ void main()
     sessionSmoke();
     sessionSmokeHandshake();
     sessionKeyboardInteractive();
+    sessionKeepalive();
 
     // Agent.
     agentSmoke();

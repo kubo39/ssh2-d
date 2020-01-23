@@ -212,6 +212,22 @@ public:
             throw new SessionError(this.raw, rc);
     }
 
+    /// Set keepalive messages should be sent.
+    void keepalive(bool want_reply, uint interval)
+    {
+        libssh2_keepalive_config(this.raw, cast(int) want_reply, interval);
+    }
+
+    /// Send a keepalive message.
+    uint sendKeepalive()
+    {
+        int ret;
+        auto rc = libssh2_keepalive_send(this.raw, &ret);
+        if (rc < 0)
+            throw new SessionError(this.raw, rc);
+        return cast(uint) ret;
+    }
+
     /// Send a SSH_USERAUTH_NONE request to the remote host.
     string authMethods(string username) nothrow
     {
