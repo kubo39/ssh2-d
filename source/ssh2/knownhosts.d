@@ -16,17 +16,6 @@ package:
         this.session = session;
     }
 
-public:
-    ~this()
-    {
-        libssh2_knownhost_free(this.raw);
-    }
-
-    auto opSlice()
-    {
-        return new Hosts(this);
-    }
-
     class Hosts
     {
     private:
@@ -77,6 +66,17 @@ public:
 
     import std.range : isInputRange;
     static assert(isInputRange!Hosts);
+
+public:
+    ~this()
+    {
+        libssh2_knownhost_free(this.raw);
+    }
+
+    auto opSlice()
+    {
+        return new Hosts(this);
+    }
 }
 
 class Host

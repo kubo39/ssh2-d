@@ -17,6 +17,57 @@ package:
         this.session = session;
     }
 
+    class Identities
+    {
+    private:
+        libssh2_agent_publickey* prev;
+        Agent agent;
+        PublicKey publicKey;
+
+        void getIdentity(libssh2_agent_publickey* prev)
+        {
+            libssh2_agent_publickey* next;
+            auto rc = libssh2_agent_get_identity(this.agent.raw, &next, prev);
+            if (rc == 0)
+            {
+                this.prev = next;
+                this.publicKey = new PublicKey(this.prev);
+            }
+            else if (rc == 1)
+            {
+                this.prev = null;
+                this.publicKey = null;
+            }
+            else
+                throw new SessionError(this.agent.session, rc);
+        }
+    package:
+        this(Agent agent)
+        {
+            this.agent = agent;
+            getIdentity(null);
+        }
+
+    public:
+        bool empty() @nogc nothrow pure
+        {
+            return this.prev is null;
+        }
+
+        void popFront()
+        {
+            getIdentity(this.prev);
+        }
+
+        PublicKey front() @nogc nothrow pure
+        {
+            return this.publicKey;
+        }
+    }
+
+    import std.range : isInputRange;
+    static assert(isInputRange!Identities);
+
 public:
     ~this()
     {
@@ -53,58 +104,6 @@ public:
     {
         return new Identities(this);
     }
-
-    class Identities
-    {
-    private:
-        libssh2_agent_publickey* prev;
-
-        void getIdentity(libssh2_agent_publickey* prev)
-        {
-            libssh2_agent_publickey* next;
-            auto rc = libssh2_agent_get_identity(this.agent.raw, &next, prev);
-            if (rc == 0)
-            {
-                this.prev = next;
-                this.publicKey = new PublicKey(this.prev);
-            }
-            else if (rc == 1)
-            {
-                this.prev = null;
-                this.publicKey = null;
-            }
-            else
-                throw new SessionError(this.agent.session, rc);
-        }
-
-    public:
-        Agent agent;
-        PublicKey publicKey;
-
-        this(Agent agent)
-        {
-            this.agent = agent;
-            getIdentity(null);
-        }
-
-        bool empty() @nogc nothrow pure
-        {
-            return this.prev is null;
-        }
-
-        void popFront()
-        {
-            getIdentity(this.prev);
-        }
-
-        PublicKey front() @nogc nothrow pure
-        {
-            return this.publicKey;
-        }
-    }
-
-    import std.range : isInputRange;
-    static assert(isInputRange!Identities);
 
     /// Attempt public key authentication.
     void userauth(string username, PublicKey identity)
