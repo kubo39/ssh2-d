@@ -7,7 +7,6 @@ import ssh2.exception;
 import ssh2.knownhosts;
 
 import core.time : dur, Duration;
-import core.stdc.config : c_long;
 
 import std.socket : TcpSocket;
 import std.typecons : Tuple;
@@ -112,6 +111,7 @@ public:
     /// functions.
     void timeout(Duration timeout) @nogc nothrow
     {
+        import core.stdc.config : c_long;
         auto timeout_ms = cast(c_long) timeout.total!"msecs";
         libssh2_session_set_timeout(this.raw, timeout_ms);
     }
