@@ -69,7 +69,7 @@ package:
     static assert(isInputRange!Identities);
 
 public:
-    ~this()
+    ~this() @nogc nothrow
     {
         libssh2_agent_free(this.raw);
     }
@@ -123,7 +123,7 @@ class PublicKey
 package:
     libssh2_agent_publickey* raw;
 
-    this(libssh2_agent_publickey* raw)
+    this(libssh2_agent_publickey* raw) @nogc nothrow pure
     {
         this.raw = raw;
     }

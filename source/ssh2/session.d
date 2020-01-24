@@ -73,7 +73,7 @@ public:
         assert(this.raw !is null);
     }
 
-    ~this()
+    ~this() @nogc nothrow
     {
         libssh2_session_free(this.raw);
     }
@@ -229,7 +229,7 @@ public:
     }
 
     /// Returns the blocked I/O directions.
-    BlockDirections blockDirections()
+    BlockDirections blockDirections() @nogc nothrow
     {
         auto dir = libssh2_session_block_directions(this.raw);
         switch (dir)
@@ -247,7 +247,7 @@ public:
     }
 
     /// Set keepalive messages should be sent.
-    void keepalive(bool want_reply, uint interval)
+    void keepalive(bool want_reply, uint interval) @nogc nothrow
     {
         libssh2_keepalive_config(this.raw, cast(int) want_reply, interval);
     }
@@ -263,7 +263,7 @@ public:
     }
 
     /// Send a SSH_USERAUTH_NONE request to the remote host.
-    string authMethods(string username) nothrow
+    string authMethods(string username)
     {
         import std.string : fromStringz, toStringz;
         const ret = libssh2_userauth_list(

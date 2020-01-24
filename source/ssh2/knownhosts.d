@@ -10,7 +10,7 @@ private:
     LIBSSH2_SESSION* session;
 
 package:
-    this(LIBSSH2_KNOWNHOSTS* raw, LIBSSH2_SESSION* session)
+    this(LIBSSH2_KNOWNHOSTS* raw, LIBSSH2_SESSION* session) @nogc nothrow pure
     {
         this.raw = raw;
         this.session = session;
@@ -68,7 +68,7 @@ package:
     static assert(isInputRange!Hosts);
 
 public:
-    ~this()
+    ~this() @nogc nothrow
     {
         libssh2_knownhost_free(this.raw);
     }
@@ -85,7 +85,7 @@ private:
     libssh2_knownhost* raw;
 
 package:
-    this(libssh2_knownhost* raw)
+    this(libssh2_knownhost* raw) @nogc nothrow pure
     {
         this.raw = raw;
     }
