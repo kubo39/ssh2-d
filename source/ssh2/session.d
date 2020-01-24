@@ -146,8 +146,9 @@ public:
         const ret = libssh2_session_hostkey(this.raw, &len, &kind);
         if (ret is null)
             return HostKey.init;
-        const data = ret[0 .. len];
-        auto type = () @nogc nothrow pure @safe {
+        HostKey hostKey;
+        hostKey.data = ret[0 .. len];
+        hostKey.type = () @nogc nothrow pure @safe {
             switch (kind)
             {
             case LIBSSH2_HOSTKEY_TYPE_RSA: return HostKeyType.RSA;
@@ -159,9 +160,6 @@ public:
             default: return HostKeyType.UNKNOWN;
             }
         } ();
-        HostKey hostKey;
-        hostKey.data = data;
-        hostKey.type = type;
         return hostKey;
     }
 
