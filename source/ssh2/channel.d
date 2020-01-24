@@ -53,13 +53,11 @@ public:
     /// Initiate request on a session type channel.
     void processStartup(string request, string message = null)
     {
-        import std.string : toStringz;
-        const msg = message.length ? message.toStringz : null;
         auto rc = libssh2_channel_process_startup(
             this.raw,
-            request.toStringz,
+            request.ptr,
             cast(uint) request.length,
-            msg,
+            message.ptr,
             cast(uint) message.length);
         if (rc < 0)
             throw new SessionError(this.session, rc);
@@ -159,19 +157,17 @@ public:
     }
 
     /// Request PT on established channel.
-    void requestPTY(string term)
+    void requestPTY(string term) @nogc nothrow
     {
         requestPTY(term, PtyModes([]), Dimension(80, 24, 0, 0));
     }
 
     /// Ditto.
-    void requestPTY(string term, PtyModes mode, Dimension dim)
+    void requestPTY(string term, PtyModes mode, Dimension dim) @nogc nothrow
     {
-        import std.string : toStringz;
-
         libssh2_channel_request_pty_ex(
             this.raw,
-            term.toStringz,
+            term.ptr,
             cast(uint) term.length,
             mode.ptr,
             cast(uint) mode.length,
