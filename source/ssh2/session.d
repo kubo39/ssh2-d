@@ -133,7 +133,7 @@ public:
     {
         auto rc = libssh2_session_flag(
             this.raw,
-            cast(int) LIBSSH2_FLAG_COMPRESS,
+            LIBSSH2_FLAG_COMPRESS,
             cast(int) flag);
         if (rc < 0)
             throw new SessionError(this.raw, rc);
