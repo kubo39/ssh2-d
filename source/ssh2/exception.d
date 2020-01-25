@@ -26,7 +26,7 @@ class SessionError : Exception
 class SessionErrnoException : Exception
 {
     this(int code, string file = __FILE__, size_t line = __LINE__,
-         Throwable next = null) @nogc
+         Throwable next = null) @nogc nothrow
     {
         string msg;
 
@@ -121,9 +121,50 @@ class SessionErrnoException : Exception
             msg = "bad socket";
         else if (code == LIBSSH2_ERROR_KNOWN_HOSTS)
             msg = "known hosts error";
+        else if (code ==LIBSSH2_FX_EOF)
+            msg = "end of file";
+        else if (code ==LIBSSH2_FX_NO_SUCH_FILE)
+            msg = "no such file";
+        else if (code ==LIBSSH2_FX_PERMISSION_DENIED)
+            msg = "permission denied";
+        else if (code ==LIBSSH2_FX_FAILURE)
+            msg = "failure";
+        else if (code ==LIBSSH2_FX_BAD_MESSAGE)
+            msg = "bad message";
+        else if (code ==LIBSSH2_FX_NO_CONNECTION)
+            msg = "no connection";
+        else if (code ==LIBSSH2_FX_CONNECTION_LOST)
+            msg = "connection lost";
+        else if (code ==LIBSSH2_FX_OP_UNSUPPORTED)
+            msg = "operation unsupported";
+        else if (code ==LIBSSH2_FX_INVALID_HANDLE)
+            msg = "invalid handle";
+        else if (code ==LIBSSH2_FX_NO_SUCH_PATH)
+            msg = "no such path";
+        else if (code ==LIBSSH2_FX_FILE_ALREADY_EXISTS)
+            msg = "file already exists";
+        else if (code ==LIBSSH2_FX_WRITE_PROTECT)
+            msg = "file is write protected";
+        else if (code ==LIBSSH2_FX_NO_MEDIA)
+            msg = "no media available";
+        else if (code ==LIBSSH2_FX_NO_SPACE_ON_FILESYSTEM)
+            msg = "no space on filesystem";
+        else if (code ==LIBSSH2_FX_QUOTA_EXCEEDED)
+            msg = "quota exceeded";
+        else if (code ==LIBSSH2_FX_UNKNOWN_PRINCIPAL)
+            msg = "unknown principal";
+        else if (code ==LIBSSH2_FX_LOCK_CONFLICT)
+            msg = "lock conflict";
+        else if (code ==LIBSSH2_FX_DIR_NOT_EMPTY)
+            msg = "directory not empty";
+        else if (code ==LIBSSH2_FX_NOT_A_DIRECTORY)
+            msg = "not a directory";
+        else if (code ==LIBSSH2_FX_INVALID_FILENAME)
+            msg = "invalid filename";
+        else if (code ==LIBSSH2_FX_LINK_LOOP)
+            msg = "link loop";
         else
             msg = "unknown error";
-
         super(msg, file, line, next);
     }
 }
