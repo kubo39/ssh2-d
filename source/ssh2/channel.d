@@ -38,6 +38,19 @@ public:
         libssh2_channel_free(this.raw);
     }
 
+    /// Set environment variable.
+    void setenv(string var, string val)
+    {
+        auto rc = libssh2_channel_setenv_ex(
+            this.raw,
+            var.ptr,
+            cast(uint) var.length,
+            val.ptr,
+            cast(uint) val.length);
+        if (rc < 0)
+            throw new SessionError(this.session, rc);
+    }
+
     /// Execute command.
     void exec(string command)
     {

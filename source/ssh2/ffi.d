@@ -254,6 +254,12 @@ ptrdiff_t libssh2_channel_read_ex(
     int stream_id,
     ubyte* buf,
     size_t buflen);
+int libssh2_channel_setenv_ex(
+    LIBSSH2_CHANNEL* chan,
+    const(char)* var,
+    uint varlen,
+    const(char)* val,
+    uint vallen);
 int libssh2_channel_receive_window_adjust2(
     LIBSSH2_CHANNEL* chan,
     ulong adjust,

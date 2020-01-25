@@ -272,6 +272,15 @@ void channelShell()
     channel.destroy();
 }
 
+void channelSetenv()
+{
+    auto sess = authedSession();
+    auto channel = sess.channelSession();
+    channel.setenv("FOO", "BAR");
+    channel.close();
+    channel.destroy();
+}
+
 /**
  *  Knownhosts
  */
