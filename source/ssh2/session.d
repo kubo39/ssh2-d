@@ -80,7 +80,8 @@ public:
     /// Set the SSH protocol banner for the local client.
     void banner(string banner)
     {
-        auto rc = libssh2_session_banner_set(this.raw, banner.ptr);
+        import std.string : toStringz;
+        auto rc = libssh2_session_banner_set(this.raw, banner.toStringz);
         if (rc < 0)
             throw new SessionError(this.raw, rc);
     }
@@ -166,10 +167,11 @@ public:
     /// Set preferred key exchange method.
     void methodPref(MethodType method_type, string prefs)
     {
+        import std.string : toStringz;
         auto rc = libssh2_session_method_pref(
             this.raw,
             cast(int) method_type,
-            prefs.ptr
+            prefs.toStringz
             );
         if (rc < 0)
             throw new SessionError(this.raw, rc);
@@ -261,10 +263,10 @@ public:
     /// Send a SSH_USERAUTH_NONE request to the remote host.
     string authMethods(string username)
     {
-        import std.string : fromStringz;
+        import std.string : fromStringz, toStringz;
         const ret = libssh2_userauth_list(
             this.raw,
-            username.ptr,
+            username.toStringz,
             cast(uint) username.length
             );
         if (ret is null)
@@ -327,13 +329,16 @@ public:
     Channel channelOpen(string channel_type, uint window_size,
                         uint packet_size, string message)
     {
+        import std.string : toStringz;
+
+        const msg = message.length ? message.toStringz : null;
         auto ptr = libssh2_channel_open_ex(
             this.raw,
-            channel_type.ptr,
+            channel_type.toStringz,
             cast(uint) channel_type.length,
             window_size,
             packet_size,
-            message.ptr,
+            msg,
             cast(uint) message.length);
         if (ptr is null)
             throw new SessionErrnoException(LIBSSH2_ERROR_ALLOC);

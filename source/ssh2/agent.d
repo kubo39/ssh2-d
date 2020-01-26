@@ -108,9 +108,10 @@ public:
     /// Attempt public key authentication.
     void userauth(string username, PublicKey identity)
     {
+        import std.string : toStringz;
         auto rc = libssh2_agent_userauth(
             this.raw,
-            username.ptr,
+            username.toStringz,
             identity.raw);
         if (rc < 0)
             throw new SessionError(this.session, rc);
