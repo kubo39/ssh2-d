@@ -3,12 +3,27 @@ module ssh2.channel;
 private import ssh2.ffi;
 import ssh2.exception;
 import ssh2.session;
-public import ssh2.util : Dimension, PtyModes;
 
 import std.range : isOutputRange;
 
 /// Stream ID of the stderr channel.
 private static int EXTENDED_DATA_STDERR = 1;
+
+struct Dimension
+{
+    uint width;
+    uint height;
+    uint width_px;
+    uint height_px;
+}
+
+/// Encodes modes for Pty allocation requests.
+/// The modes documented in <https://tools.ietf.org/html/rfc4250#section-4.5>
+struct PtyModes
+{
+    ubyte[] data;
+    alias data this;
+}
 
 /// How to handle extended data
 enum ExtendedData
