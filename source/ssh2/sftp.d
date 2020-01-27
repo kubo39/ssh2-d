@@ -16,7 +16,7 @@ package:
     }
 
 public:
-    ~this()
+    ~this() @nogc nothrow
     {
         libssh2_sftp_shutdown(this.raw);
     }
