@@ -269,6 +269,12 @@ public:
 
         libssh2_struct_stat sb;
         auto ret = libssh2_scp_recv2(this.raw, path.toStringz, &sb);
+        if (ret is null)
+        {
+            char* msg;
+            auto rc = libssh2_session_last_error(this.raw, &msg, null, 0);
+            throw new SessionErrnoException(rc);
+        }
         auto chan = new Channel(ret, this.raw);
         return tuple(chan, sb);
     }
