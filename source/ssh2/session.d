@@ -310,7 +310,13 @@ public:
             cast(uint) username.length
             );
         if (ret is null)
-            assert(false);
+        {
+            char* msg;
+            auto rc = libssh2_session_last_error(this.raw, &msg, null, 0);
+            if (rc == 0)
+                return "";
+            throw new SessionErrnoException(rc);
+        }
         return cast(immutable) ret.fromStringz;
     }
 
