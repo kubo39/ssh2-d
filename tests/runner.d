@@ -342,6 +342,17 @@ void knownhostsSmoke()
 }
 
 /**
+ * SFTP.
+ */
+
+void sftpSmoke()
+{
+    auto sess = authedSession();
+    auto sftp = sess.sftp();
+    sftp.destroy();
+}
+
+/**
  *  Entrypoint.
  */
 
@@ -370,4 +381,7 @@ void main()
 
     // Knownhosts.
     knownhostsSmoke();
+
+    // SFTP.
+    sftpSmoke();
 }

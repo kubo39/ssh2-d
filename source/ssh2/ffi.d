@@ -119,6 +119,7 @@ struct LIBSSH2_SESSION;
 struct LIBSSH2_AGENT;
 struct LIBSSH2_CHANNEL;
 struct LIBSSH2_KNOWNHOSTS;
+struct LIBSSH2_SFTP;
 
 alias libssh2_struct_stat = stat_t;
 
@@ -298,3 +299,7 @@ LIBSSH2_CHANNEL* libssh2_scp_send64(
     long size,
     time_t mtime,
     time_t atime);
+
+// sftp
+LIBSSH2_SFTP* libssh2_sftp_init(LIBSSH2_SESSION* sess);
+int libssh2_sftp_shutdown(LIBSSH2_SFTP* sftp);

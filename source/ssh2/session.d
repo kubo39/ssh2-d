@@ -5,6 +5,7 @@ import ssh2.agent;
 import ssh2.channel;
 import ssh2.exception;
 import ssh2.knownhosts;
+import ssh2.sftp;
 
 import core.sys.posix.sys.types : time_t;
 import core.time : dur, Duration;
@@ -359,6 +360,19 @@ public:
         if (ret is null)
             return null;
         return ret[0 .. len];
+    }
+
+    /// Open a channel and initialize the SFTP subsystem.
+    Sftp sftp()
+    {
+        auto ret = libssh2_sftp_init(this.raw);
+        if (ret is null)
+        {
+            char* msg;
+            auto rc = libssh2_session_last_error(this.raw, &msg, null, 0);
+            throw new SessionErrnoException(rc);
+        }
+        return new Sftp(ret, this.raw);
     }
 
     /// Establish new session-based channel.
