@@ -148,11 +148,12 @@ void sessionScpRecv()
 void sessionScpSend()
 {
     import std.conv : octal;
-    import std.file : readText, mkdirRecurse, remove, tempDir;
+    import std.file : exists, readText, rmdir, mkdirRecurse, remove, tempDir;
     import std.path : buildPath;
 
     auto td = tempDir.buildPath("test");
     mkdirRecurse(td);
+    scope (exit) if (td.exists) rmdir(td);
     auto deleteme = buildPath(td, "foo");
     scope (exit) deleteme.remove();
     auto sess = authedSession();
