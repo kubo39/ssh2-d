@@ -143,6 +143,24 @@ void sessionScpRecv()
     assert(cast(string) data[0 .. len] == expected[0 .. len]);
 }
 
+void sessionScpSend()
+{
+    import std.conv : octal;
+    import std.file : readText, mkdirRecurse, remove, tempDir;
+    import std.path : buildPath;
+
+    auto td = tempDir.buildPath("test");
+    mkdirRecurse(td);
+    auto deleteme = buildPath(td, "foo");
+    scope (exit) deleteme.remove();
+    auto sess = authedSession();
+    auto ch = sess.scpSend(deleteme, octal!644, 6);
+    ch.write("foobar");
+    ch.destroy();
+    auto actual = deleteme.readText;
+    assert(actual == "foobar");
+}
+
 void sessionBlockDirection()
 {
     import std.exception : assertThrown;
@@ -333,6 +351,7 @@ void main()
     sessionKeyboardInteractive();
     sessionKeepalive();
     sessionScpRecv();
+    sessionScpSend();
     sessionBlockDirection();
 
     // Agent.

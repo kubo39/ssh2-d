@@ -2,6 +2,7 @@ module ssh2.ffi;
 
 import core.stdc.config : c_long;
 import core.sys.posix.sys.stat : stat_t;
+import core.sys.posix.sys.types : time_t;
 
 extern(C):
 @nogc:
@@ -290,3 +291,10 @@ LIBSSH2_CHANNEL* libssh2_scp_recv2(
     LIBSSH2_SESSION* sess,
     const(char)* path,
     libssh2_struct_stat* sb);
+LIBSSH2_CHANNEL* libssh2_scp_send64(
+    LIBSSH2_SESSION* sess,
+    const(char)* path,
+    int mode,
+    long size,
+    time_t mtime,
+    time_t atime);

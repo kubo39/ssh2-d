@@ -6,6 +6,7 @@ import ssh2.channel;
 import ssh2.exception;
 import ssh2.knownhosts;
 
+import core.sys.posix.sys.types : time_t;
 import core.time : dur, Duration;
 
 import std.socket : TcpSocket;
@@ -270,6 +271,27 @@ public:
         auto ret = libssh2_scp_recv2(this.raw, path.toStringz, &sb);
         auto chan = new Channel(ret, this.raw);
         return tuple(chan, sb);
+    }
+
+    /// Send a file to the remote host via SCP.
+    Channel scpSend(string path, int mode, ulong size,
+                    time_t mtime = 0, time_t atime = 0)
+    {
+        import std.string : toStringz;
+        auto ret = libssh2_scp_send64(
+            this.raw,
+            path.toStringz,
+            mode,
+            cast(long) size,
+            mtime,
+            atime);
+        if (ret is null)
+        {
+            char* msg;
+            auto rc = libssh2_session_last_error(this.raw, &msg, null, 0);
+            throw new SessionErrnoException(rc);
+        }
+        return new Channel(ret, this.raw);
     }
 
     /// Send a SSH_USERAUTH_NONE request to the remote host.
