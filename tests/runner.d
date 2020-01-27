@@ -45,6 +45,7 @@ Session authedSession()
 void sessionSmoke()
 {
     import core.time : msecs;
+    import std.exception : assertThrown;
 
     auto sess = new Session();
     sess.banner("foo");
@@ -58,6 +59,7 @@ void sessionSmoke()
     sess.timeout(0.msecs);
     assert(sess.supprtedAlgs(MethodType.KEX).length > 0);
     assert(sess.supprtedAlgs(MethodType.HOSTKEY).length > 0);
+    assertThrown(sess.channelSession());
 }
 
 void sessionSmokeHandshake()
