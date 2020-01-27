@@ -11,6 +11,7 @@ addons:
   apt:
     packages:
       - libssh2-1-dev
+      - libssl-dev
 
 script:
   - dub build
