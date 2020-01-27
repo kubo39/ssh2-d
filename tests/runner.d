@@ -116,6 +116,33 @@ void sessionKeepalive()
     sess.sendKeepalive();
 }
 
+void sessionScpRecv()
+{
+    import std.file : readText;
+
+    string realPath(string path)
+    {
+        import core.stdc.stdlib : free;
+        import core.sys.posix.stdlib : realpath;
+        import std.exception : errnoEnforce;
+        import std.string : fromStringz, toStringz;
+
+        auto ptr = realpath(path.toStringz, null);
+        errnoEnforce(ptr !is null);
+        scope (exit) free(ptr);
+        return ptr.fromStringz.idup;
+    }
+
+    auto sess = authedSession();
+    auto pair = sess.scpRecv(realPath(__FILE__));
+    auto channel = pair[0];
+    ubyte[2048] data;
+    auto len = channel.read(data[]);
+    channel.destroy();
+    string expected = __FILE__.readText();
+    assert(cast(string) data[0 .. len] == expected[0 .. len]);
+}
+
 void sessionBlockDirection()
 {
     import std.exception : assertThrown;
@@ -305,6 +332,7 @@ void main()
     sessionSmokeHandshake();
     sessionKeyboardInteractive();
     sessionKeepalive();
+    sessionScpRecv();
     sessionBlockDirection();
 
     // Agent.

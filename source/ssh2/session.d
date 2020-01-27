@@ -260,6 +260,18 @@ public:
         return cast(uint) ret;
     }
 
+    /// Request a file from the remote host via SCP.
+    auto scpRecv(string path)
+    {
+        import std.string : toStringz;
+        import std.typecons : tuple;
+
+        libssh2_struct_stat sb;
+        auto ret = libssh2_scp_recv2(this.raw, path.toStringz, &sb);
+        auto chan = new Channel(ret, this.raw);
+        return tuple(chan, sb);
+    }
+
     /// Send a SSH_USERAUTH_NONE request to the remote host.
     string authMethods(string username)
     {

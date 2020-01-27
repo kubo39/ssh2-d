@@ -1,6 +1,7 @@
 module ssh2.ffi;
 
 import core.stdc.config : c_long;
+import core.sys.posix.sys.stat : stat_t;
 
 extern(C):
 @nogc:
@@ -117,6 +118,8 @@ struct LIBSSH2_SESSION;
 struct LIBSSH2_AGENT;
 struct LIBSSH2_CHANNEL;
 struct LIBSSH2_KNOWNHOSTS;
+
+alias libssh2_struct_stat = stat_t;
 
 struct libssh2_agent_publickey
 {
@@ -281,3 +284,9 @@ int libssh2_knownhost_get(
     libssh2_knownhost** store,
     libssh2_knownhost* prev);
 LIBSSH2_KNOWNHOSTS* libssh2_knownhost_init(LIBSSH2_SESSION* sess);
+
+// scp
+LIBSSH2_CHANNEL* libssh2_scp_recv2(
+    LIBSSH2_SESSION* sess,
+    const(char)* path,
+    libssh2_struct_stat* sb);
