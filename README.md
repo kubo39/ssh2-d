@@ -1,4 +1,4 @@
-# ssh2-d
+# ssh2-d [![Build Status](https://secure.travis-ci.org/kubo39/ssh2-d.svg?branch=master)](http://travis-ci.org/kubo39/ssh2-d)
 
 D bindings to libssh2.
 
