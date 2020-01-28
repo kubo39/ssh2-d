@@ -8,7 +8,7 @@ import ssh2.knownhosts;
 import ssh2.sftp;
 
 import core.sys.posix.sys.types : time_t;
-import core.time : dur, Duration;
+import core.time : Duration, msecs;
 
 import std.socket : TcpSocket;
 import std.typecons : Tuple;
@@ -125,8 +125,7 @@ public:
     /// A timeout of 0 means no timeout.
     Duration timeout() @nogc nothrow
     {
-        auto timeout_ms = libssh2_session_get_timeout(this.raw);
-        return dur!"msecs"(timeout_ms);
+        return libssh2_session_get_timeout(this.raw).msecs;
     }
 
     /// Flag indicating whether this library will attempt to negotiate
