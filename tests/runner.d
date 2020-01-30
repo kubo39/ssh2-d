@@ -215,8 +215,8 @@ auto consumeStdio(Channel channel)
     stderr.writefln("stdout: %s", cast(string) _stdout);
     stderr.writefln("stderr: %s", cast(string) _stderr);
 
-    return tuple(cast(string) _stdout[0 .. ret1],
-                 cast(string) _stderr[0 .. ret2]);
+    return tuple(_stdout[0 .. ret1].idup,
+                 _stderr[0 .. ret2].idup);
 }
 
 void channelSmoke()
