@@ -7,7 +7,6 @@ import core.sys.posix.sys.types : time_t;
 extern(C):
 @nogc:
 nothrow:
-@system:
 
 enum LIBSSH2_FLAG_COMPRESS = 2;
 
@@ -148,6 +147,8 @@ alias LIBSSH2_REALLOC_FUNC = void* function(void*, size_t, void**);
 version (Posix) alias libssh2_socket_t = int;
 version (Win32) alias libssh2_socket_t = uint;
 version (Win64) alias libssh2_socket_t = ulong;
+
+@system:
 
 // misc
 int libssh2_init(int flag);
