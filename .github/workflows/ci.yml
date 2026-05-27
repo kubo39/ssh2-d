@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        dc: [ldc-latest, dmd-latest]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install D compiler (${{ matrix.dc }})
+        uses: dlang-community/setup-dlang@v2
+        with:
+          compiler: ${{ matrix.dc }}
+
+      - name: Install libssh2 and OpenSSL
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssh2-1-dev libssl-dev
+
+      - name: Unit tests
+        run: dub test
+
+  integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install D compiler (LDC)
+        uses: dlang-community/setup-dlang@v2
+        with:
+          compiler: ldc-latest
+
+      - name: Install libssh2, OpenSSL and OpenSSH server
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libssh2-1-dev libssl-dev openssh-server
+
+      - name: Integration tests
+        run: bash tests/run_integration_tests.sh
